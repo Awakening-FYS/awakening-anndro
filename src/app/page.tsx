@@ -3,13 +3,10 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { getRecentPosts } from "@/lib/posts"
 
 import Hero from "@/components/Hero"
 import LatestPosts from "@/components/LatestPosts"
@@ -17,7 +14,13 @@ import LatestPosts from "@/components/LatestPosts"
 export const dynamic = "force-static" // 或 "force-dynamic"
 
 export default function Home() {
-  const [recentPosts, setRecentPosts] = React.useState([]);
+  type Post = {
+    slug: string;
+    title: string;
+    date: string;
+    // 可根据实际数据结构补充字段
+  };
+  const [recentPosts, setRecentPosts] = React.useState<Post[]>([]);
   React.useEffect(() => {
     fetch('/api/posts')
       .then(res => res.json())
@@ -105,7 +108,7 @@ export default function Home() {
       <section id="articles" className="max-w-4xl mx-auto px-6 py-16">
         <h2 className="text-2xl font-semibold mb-6">最新文章</h2>
         <ul className="space-y-4">
-          {recentPosts.map((post: any) => (
+          {recentPosts.map((post: Post) => (
             <li key={post.slug}>
               <Link
                 href={`/blog/${post.slug}`}
