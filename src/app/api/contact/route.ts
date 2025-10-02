@@ -10,7 +10,8 @@ export async function POST(request: Request) {
   if (!captcha) {
     return NextResponse.json({ success: false, error: "验证码未通过" }, { status: 400 });
   }
-  const secret = "6LeFXNwrAAAAALezWu6yS8Zhmpt-e8U0lxnDsIln";
+  
+    const secret = "6LeFXNwrAAAAAMgRkdNGEmA9WVebKTCTPGDpud8M";
   const verifyRes = await fetch(
     `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${captcha}`,
     { method: "POST" }
