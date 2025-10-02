@@ -4,7 +4,21 @@ import nodemailer from 'nodemailer';
 export async function POST(request: Request) {
   console.log("API /api/contact 被调用");
   const data = await request.json();
-  const { name, email, message } = data;
+  const { name, email, message, captcha } = data;
+
+  // 校验 reCAPTCHA
+  if (!captcha) {
+    return NextResponse.json({ success: false, error: "验证码未通过" }, { status: 400 });
+  }
+  const secret = "6LeFXNwrAAAAALezWu6yS8Zhmpt-e8U0lxnDsIln";
+  const verifyRes = await fetch(
+    `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${captcha}`,
+    { method: "POST" }
+  );
+  const verifyData = await verifyRes.json();
+  if (!verifyData.success) {
+    return NextResponse.json({ success: false, error: "验证码校验失败" }, { status: 400 });
+  }
 
   // 配置 SMTP（以 gmail 为例）
   const transporter = nodemailer.createTransport({
