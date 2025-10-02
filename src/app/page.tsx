@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 
 import Hero from "@/components/Hero"
-import LatestPosts from "@/components/LatestPosts"
 
 export const dynamic = "force-static" // 或 "force-dynamic"
 
