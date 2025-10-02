@@ -15,7 +15,7 @@ export function getAllPosts() {
     const { data } = matter(fileContents)
 
     return {
-      slug: fileName.replace(/\.md$/, ""),
+      slug: fileName.replace(/\.mdx?$/, ""),
       title: data.title,
       date: data.date,
       excerpt: data.excerpt,
@@ -33,7 +33,7 @@ export function getRecentPosts(limit = 3) {
 
 
 export async function getPostBySlug(slug: string) {
-  const fullPath = path.join(postsDirectory, `${slug}.md`)
+  const fullPath = path.join(postsDirectory, `${slug}.mdx`)
   const fileContents = fs.readFileSync(fullPath, "utf8")
 
   const { data, content } = matter(fileContents)

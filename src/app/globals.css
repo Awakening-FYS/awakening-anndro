@@ -1,3 +1,11 @@
+/* 保证 Markdown 列表最后一项与下方内容有间距 */
+.prose ul li:last-child {
+  margin-bottom: 1.25em !important;
+}
+/* 强制 prose 段落间距，确保 Tailwind 样式不被覆盖 */
+.prose p {
+  margin-bottom: 1.25em !important;
+}
 @import "tailwindcss";
 @import "tw-animate-css";
 

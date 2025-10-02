@@ -4,36 +4,37 @@ import { getAllPosts } from "@/lib/posts"
 
 export default function BlogPage() {
   const posts = getAllPosts()
+  const latestPost = posts[0]
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold mb-8">觉醒博客</h1>
-      <div className="space-y-8">
+      {/* 仅显示最近博客的图片 */}
+      {latestPost?.coverImage && (
+        <Image
+          src={latestPost.coverImage}
+          alt={latestPost.title}
+          width={800}
+          height={400}
+          className="rounded-lg mb-8"
+        />
+      )}
+      {/* 列出所有博客链接 */}
+      <ul className="space-y-4">
         {posts.map((post) => (
-          <div key={post.slug} className="border-b pb-6">
-            {post.coverImage && (
-              <Image
-                src={post.coverImage}
-                alt={post.title}
-                width={800}
-                height={400}
-                className="rounded-lg mb-4"
-              />
+          <li key={post.slug}>
+            <div className="flex items-center justify-between">
+              <Link href={`/blog/${post.slug}`} className="text-blue-600 hover:underline text-xl font-semibold">
+                {post.title}
+              </Link>
+              <span className="text-gray-500 text-sm">{post.date}</span>
+            </div>
+            {post.excerpt && (
+              <p className="text-gray-700 mt-1">{post.excerpt}</p>
             )}
-            <h2 className="text-2xl font-semibold">
-              <Link href={`/blog/${post.slug}`}>{post.title}</Link>
-            </h2>
-            <p className="text-gray-500 text-sm mb-2">{post.date}</p>
-            <p className="text-gray-700">{post.excerpt}</p>
-            <Link
-              href={`/blog/${post.slug}`}
-              className="text-blue-600 hover:underline mt-2 block"
-            >
-              阅读更多 →
-            </Link>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </main>
   )
 }
