@@ -1,5 +1,7 @@
+"use client"
 //"use client"
 
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from "framer-motion"
@@ -15,7 +17,34 @@ import LatestPosts from "@/components/LatestPosts"
 export const dynamic = "force-static" // 或 "force-dynamic"
 
 export default function Home() {
-  const recentPosts = getRecentPosts(3)
+  const [recentPosts, setRecentPosts] = React.useState([]);
+  React.useEffect(() => {
+    fetch('/api/posts')
+      .then(res => res.json())
+      .then(data => setRecentPosts(data));
+  }, []);
+  async function handleContactSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      message: formData.get('message'),
+    };
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (res.ok) {
+      alert('发送成功！');
+      form.reset();
+    } else {
+      alert('发送失败，请稍后再试。');
+    }
+  }
+
   return (
    <div className="min-h-screen flex flex-col bg-gradient-to-b from-green-200 via-blue-200 to-yellow-100">
     {/* </div><div className="min-h-screen flex flex-col"> */}
@@ -32,19 +61,7 @@ export default function Home() {
           </Link>
         </div> 
 
-        {/* <h2 className="text-2xl font-semibold mb-6">
-          <Link href="/about" className="hover:underline text-blue-600 dark:text-blue-400">
-            关于我们
-          </Link>
-        </h2> */}
-
-        {/* <h2 className="text-2xl font-semibold mb-6">
-          <Link href="/about" className="hover:underline">
-            关于我们
-          </Link>
-        </h2> */}
         
-        {/* <h2 className="text-2xl font-semibold mb-6">关于我们</h2> */}
 
         <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
           意识觉醒致力于帮助人们通过正念练习与冥想，提升觉察力与内在平衡。我们相信每个人都能在繁杂世界中找到属于自己的安宁与力量。
@@ -85,11 +102,10 @@ export default function Home() {
       </section>
 
       {/* Articles */}
-      <LatestPosts />
-      {/* <section id="articles" className="max-w-4xl mx-auto px-6 py-16">
+      <section id="articles" className="max-w-4xl mx-auto px-6 py-16">
         <h2 className="text-2xl font-semibold mb-6">最新文章</h2>
         <ul className="space-y-4">
-          {recentPosts.map((post) => (
+          {recentPosts.map((post: any) => (
             <li key={post.slug}>
               <Link
                 href={`/blog/${post.slug}`}
@@ -101,7 +117,6 @@ export default function Home() {
             </li>
           ))}
         </ul>
-
         <div className="mt-6">
           <Link
             href="/blog"
@@ -110,7 +125,8 @@ export default function Home() {
             查看所有文章 →
           </Link>
         </div>
-      </section> */}
+      </section>
+      
       
       {/* Courses */}
       <section id="courses" className="bg-gray-50 dark:bg-gray-900 py-16 px-6">
@@ -166,14 +182,15 @@ export default function Home() {
       <section id="contact" className="bg-gray-50 dark:bg-gray-900 py-16 px-6">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl font-semibold mb-6">联系我</h2>
-          <form className="space-y-4">
-            <Input type="text" placeholder="你的名字" required />
-            <Input type="email" placeholder="你的邮箱" required />
-            <Textarea placeholder="你的信息..." rows={4} required />
+          <form className="space-y-4" onSubmit={handleContactSubmit}>
+            <Input type="text" name="name" placeholder="你的名字" required />
+            <Input type="email" name="email" placeholder="你的邮箱" required />
+            <Textarea name="message" placeholder="你的信息..." rows={4} required />
             <Button type="submit" className="rounded-full">
               发送
             </Button>
           </form>
+          <p className="text-xs text-gray-500 mt-4">表单信息将直接发送到我们的邮箱</p>
         </div>
       </section>
 
