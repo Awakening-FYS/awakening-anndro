@@ -41,7 +41,6 @@ export default function CommentSection() {
   }, [])
 
   
-
   const sanitizeInput = (input: string) => {
     // 去掉 HTML 标签
     return input.replace(/<[^>]*>?/gm, "")
@@ -96,54 +95,7 @@ export default function CommentSection() {
   return (
     <div className="mt-1 mb-1 border-t border-gray-300 pt-1 px-10">
       <h2 className="text-2xl font-semibold mb-6">💬 留言区</h2>
-
-      {/* 表单 */}
-      <form onSubmit={handleSubmit} className="space-y-4 mb-8">
-        <input
-          type="text"
-          placeholder="你的名字"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500"
-        />
-        <textarea
-          placeholder="写下你的留言（最多 500 字）..."
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 h-28 focus:ring-2 focus:ring-blue-500"
-        />
-
-        {/* 错误与成功提示 */}
-        {error && <p className="text-red-600 text-sm">{error}</p>}
-        {success && <p className="text-green-600 text-sm">{success}</p>}
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`${
-            isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-          } text-white px-6 py-2 rounded-lg transition`}
-        >
-          {isSubmitting ? "正在提交..." : "发表留言"}
-        </button>
-      </form>
-
-      {/* 显示留言 */}
-      {comments.length === 0 ? (
-        <p className="text-gray-500 italic">还没有留言，快来抢沙发吧！</p>
-      ) : (
-        <ul className="space-y-6">
-          {comments.map((comment, index) => (
-            <li key={index} className="border-b pb-4">
-              <div className="flex justify-between items-center mb-1">
-                <span className="font-semibold">{comment.name}</span>
-                <span className="text-sm text-gray-500">{comment.date}</span>
-              </div>
-              <p className="text-gray-800 whitespace-pre-line">{comment.text}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+        <div id="giscus-container" />     
     </div>
   )
 }
