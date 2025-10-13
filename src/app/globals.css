@@ -1,15 +1,14 @@
-/* 保证 Markdown 列表最后一项与下方内容有间距 */
-.prose ul li:last-child {
-  margin-bottom: 1.25em !important;
-}
-/* 强制 prose 段落间距，确保 Tailwind 样式不被覆盖 */
-.prose p {
-  margin-bottom: 1.25em !important;
-}
-@import "tailwindcss";
-@import "tw-animate-css";
+@import "tailwindcss/theme";      /* ✅ 引入自定义主题层 */
+@import "tailwindcss/utilities";  /* ✅ 引入 Tailwind 工具层（保留兼容） */
+@import "tw-animate-css";         /* ✅ 动画库可留 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @custom-variant dark (&:is(.dark *));
+
+
+
 
 @theme inline {
   --color-background: var(--background);
@@ -128,3 +127,54 @@
     @apply bg-background text-foreground;
   }
 }
+.prose img {
+  border-radius: 0.5rem;
+}
+
+.prose pre {
+  background-color: oklch(0.97 0 0);
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.prose table {
+  @apply border border-gray-300 w-full;
+}
+
+.prose th {
+  @apply bg-gray-100 border border-red-300 px-4 py-2  font-semibold;
+}
+
+.prose td {
+  @apply border border-red-300 px-4 py-2;
+}
+
+
+.prose table {
+  width: 100%;
+  table-layout: fixed; /* 让列宽生效 */
+}
+
+.prose th:nth-child(1),
+.prose td:nth-child(1) {
+  width: 20%;
+}
+
+.prose th:nth-child(2),
+.prose td:nth-child(2) {
+  width: 40%;
+}
+
+.prose th:nth-child(3),
+.prose td:nth-child(3) {
+  width: 40%;
+}
+
+
+
+
+/* .prose p::after {
+  content: "🌀 typography loaded";
+  color: red;
+}
+ */

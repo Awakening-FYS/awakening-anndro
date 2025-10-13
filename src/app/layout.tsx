@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="zh">
       <body className="antialiased">
         <Navbar />   {/* 全局导航栏 */}
-        <main className="max-w-4xl mx-auto p-6">{children}</main>
+        <main className="max-w-6xl mx-auto p-6">{children}</main>
       </body>
     </html>
   )
