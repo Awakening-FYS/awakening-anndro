@@ -6,6 +6,8 @@ import { notFound } from "next/navigation"
 import { MDXRemote } from "next-mdx-remote/rsc"
 import remarkGfm from "remark-gfm"
 import matter from "gray-matter"
+import CommentSection from "@/components/CommentSection"
+
 
 import { getAllPosts } from "@/lib/posts"
 import Spacer from "@/components/Spacer"
@@ -97,6 +99,7 @@ export default async function PostPage({ params }: Props) {
           <span />
         )}
       </div>
+      <CommentSection />
     </div>
   )
 }
