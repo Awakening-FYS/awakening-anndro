@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="antialiased">
         <Providers>
           <Navbar />
-          <main className="max-w-5xl mx-auto p-6 pt-20">{children}</main>
+          <main className="max-w-5xl mx-auto p-6" style={{ paddingTop: 'var(--navbar-height, 5rem)' }}>{children}</main>
         </Providers>
       </body>
     </html>
