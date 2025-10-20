@@ -34,3 +34,26 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Local environment setup (GitHub Discussion PAT)
+
+This project reads a GitHub Personal Access Token (PAT) from `GITHUB_TOKEN` at runtime to post comments to a GitHub Discussion. For local development:
+
+1. Create a new Personal Access Token on GitHub:
+	- Classic token: give `repo` (if repo is private) and `write:discussion` scopes.
+	- Fine-grained token: grant repository access to `Awakening-FYS/awakening-anndro` and enable Discussions Read & Write.
+
+2. Copy the token and open `.env.local` in the project root. Replace `GITHUB_TOKEN=REPLACE_WITH_YOUR_GITHUB_PAT` with your token (no surrounding quotes).
+
+3. Restart your Next.js dev server so the server process reads the new env value:
+```
+npm run dev
+```
+
+4. Verify the token locally by calling the diagnostic endpoint (available during development):
+```
+Invoke-RestMethod -Uri 'http://localhost:3000/api/github-test' -Method Get | ConvertTo-Json -Depth 5
+```
+
+If you accidentally committed a token, revoke it immediately on GitHub and replace it with a new one. Do not commit secrets to source control.
+

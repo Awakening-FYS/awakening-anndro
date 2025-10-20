@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
 export async function POST(request: Request) {
-  console.log("API /api/contact 被调用");
+  // /api/contact called
   const data = await request.json();
   const { name, email, message, captcha } = data;
 

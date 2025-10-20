@@ -40,38 +40,12 @@ export default function CommentSection() {
   }, [])
 
   // 如果用户已登录，使用 session 中的名字或邮箱作为留言名，并同步到 state
-  function getDisplayName(user: unknown) {
-    if (!user || typeof user !== 'object') return '用户'
-    const u = user as Record<string, unknown>
-    const name = typeof u.name === 'string' ? u.name : undefined
-    const email = typeof u.email === 'string' ? u.email : undefined
-    return name || email || '用户'
-  }
-
   useEffect(() => {
     if (session?.user) {
-      setName(getDisplayName(session.user))
+      const displayName = (session.user as any).name || session.user.email || "用户"
+      setName(displayName)
     }
   }, [session])
-
-  // Fetch existing comments for this page on mount
-  useEffect(() => {
-    let mounted = true
-    ;(async () => {
-      try {
-        const res = await fetch(`/api/github-discussions?path=${encodeURIComponent(window.location.pathname)}`)
-        if (!res.ok) return
-        const json = await res.json()
-        if (!mounted) return
-        if (json && Array.isArray(json.comments)) {
-          setComments(json.comments as Comment[])
-        }
-      } catch {
-        // ignore fetch errors for now
-      }
-    })()
-    return () => { mounted = false }
-  }, [])
 
   const sanitizeInput = (input: string) => input.replace(/<[^>]*>?/gm, "")
 
@@ -116,7 +90,7 @@ export default function CommentSection() {
           setError('发布到 GitHub 讨论失败')
         } else {
           // optionally show link or returned result
-          // server response logged during development; remove in production
+          console.log('GitHub Discussions response', data)
         }
       } catch (err) {
         console.error(err)

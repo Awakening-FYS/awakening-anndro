@@ -19,6 +19,7 @@ export default function Home() {
     date: string;
     // 可根据实际数据结构补充字段
   };
+  
   const [recentPosts, setRecentPosts] = React.useState<Post[]>([]);
   React.useEffect(() => {
     fetch('/api/posts')
@@ -54,6 +55,7 @@ export default function Home() {
     } else {
       alert('发送失败，请稍后再试。');
     }
+
   }
 
   return (
