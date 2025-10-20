@@ -1,6 +1,8 @@
+// Snapshot of src/components/CommentSection.tsx on 2025-10-19
+
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 
 type Comment = {
@@ -20,17 +22,8 @@ export default function CommentSection() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const bannedWords = ["广告", "http://", "https://", "色情", "赌博", "推广","www."]
-  const lastSubmitRef = useRef<number | null>(null)
-  const cooldownMs = 8_000 // 8s cooldown between submissions to avoid spam
-  const abortControllerRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
-    // Avoid injecting giscus multiple times (check by data-repo attribute)
-    const container = document.getElementById("giscus-container")
-    if (!container) return
-    const existing = Array.from(container.querySelectorAll('script')).some(s => s.getAttribute('data-repo') === 'Awakening-FYS/awakening-anndro')
-    if (existing) return
-
     const script = document.createElement("script")
     script.src = "https://giscus.app/client.js"
     script.async = true
@@ -43,29 +36,8 @@ export default function CommentSection() {
     script.setAttribute("data-reactions-enabled", "1")
     script.setAttribute("data-theme", "preferred_color_scheme")
     script.setAttribute("data-lang", "zh-CN")
-    container.appendChild(script)
+    document.getElementById("giscus-container")?.appendChild(script)
   }, [])
-
-  // Load persisted comments on mount
-  const loadComments = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/github-discussions?path=${encodeURIComponent(window.location.pathname)}`)
-      if (!res.ok) {
-        console.error('Failed to load comments', await res.text())
-        return
-      }
-      const json = await res.json()
-      if (json?.comments) {
-        setComments(json.comments)
-      }
-    } catch (err) {
-      console.error('Error loading comments', err)
-    }
-  }, [])
-
-  useEffect(() => {
-    loadComments()
-  }, [loadComments])
 
   // 如果用户已登录，使用 session 中的名字或邮箱作为留言名，并同步到 state
   useEffect(() => {
@@ -77,31 +49,19 @@ export default function CommentSection() {
 
   const sanitizeInput = (input: string) => input.replace(/<[^>]*>?/gm, "")
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-  if (!session) return alert("请先登录再发表评论")
+    if (!session) return alert("请先登录再发表评论")
 
     setError(null)
     setSuccess(null)
 
-  // If user is logged in, derive displayName from session to avoid relying on name state
-  const sessionDisplayName = session?.user ? ((session.user as any).name || session.user.email || '用户') : null
-  const cleanName = sessionDisplayName ? sessionDisplayName : sanitizeInput(name.trim())
-  const cleanText = sanitizeInput(text.trim())
+    const cleanName = sanitizeInput(name.trim())
+    const cleanText = sanitizeInput(text.trim())
 
     if (!cleanName || !cleanText) return setError("请填写姓名和留言内容。")
     if (cleanText.length > 500) return setError("留言内容不能超过 500 字。")
     if (bannedWords.some((word) => cleanText.includes(word))) return setError("留言中包含不合适的内容，请修改后再试。")
-    // Prevent quick duplicate/rapid submissions
-    const now = Date.now()
-    if (lastSubmitRef.current && now - lastSubmitRef.current < cooldownMs) {
-      return setError(`请等待 ${(Math.ceil((cooldownMs - (now - lastSubmitRef.current))/1000))} 秒后再试`)
-    }
-
-    // Prevent exact duplicate text already in current comments
-    if (comments.some(c => c.text.trim() === cleanText.trim())) {
-      return setError('您已提交相同内容，请修改后再试。')
-    }
 
     const newComment = {
       name: cleanName,
@@ -109,52 +69,36 @@ export default function CommentSection() {
       date: new Date().toLocaleString(),
     }
 
-    // Optimistic UI with rollback
-    const prevComments = comments
-  setComments([newComment, ...comments])
-  // Only clear the name input for anonymous users; keep logged-in display name in state
-  if (!session?.user) setName("")
+    // Optimistic UI
+    setComments([newComment, ...comments])
+    setName("")
     setText("")
-    setSuccess("留言发布中…")
+    setSuccess("留言发布成功！")
     setIsSubmitting(true)
 
-    // Abort any previous request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort()
-    }
-    const ac = new AbortController()
-    abortControllerRef.current = ac
-
-    try {
-      const res = await fetch('/api/github-discussions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path: window.location.pathname, name: newComment.name, text: newComment.text }),
-        signal: ac.signal,
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        console.error('Failed to post discussion', data)
-        setComments(prevComments) // rollback
-        setError(data?.error || '发布到 GitHub 讨论失败')
-        setSuccess(null)
-      } else {
-        // success: show link if provided
-        setSuccess(data?.result?.data?.createDiscussion?.discussion?.url ? '发布成功，已创建讨论' : '发布成功')
-        lastSubmitRef.current = Date.now()
-      }
-    } catch (err: any) {
-      if (err.name === 'AbortError') {
-        console.log('request aborted')
-      } else {
+    // Send to GitHub Discussions
+    ;(async () => {
+      try {
+        const res = await fetch('/api/github-discussions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: window.location.pathname, name: newComment.name, text: newComment.text }),
+        })
+        const data = await res.json()
+        if (!res.ok) {
+          console.error('Failed to post discussion', data)
+          setError('发布到 GitHub 讨论失败')
+        } else {
+          // optionally show link or returned result
+          console.log('GitHub Discussions response', data)
+        }
+      } catch (err) {
         console.error(err)
-        setComments(prevComments) // rollback
         setError('网络错误：无法发布到 GitHub')
-        setSuccess(null)
+      } finally {
+        setIsSubmitting(false)
       }
-    } finally {
-      setIsSubmitting(false)
-    }
+    })()
   }
 
   return (
