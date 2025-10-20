@@ -63,7 +63,7 @@ export async function GET() {
     ])
 
     return NextResponse.json({ ok: true, masked, repo, category, rest, graphql, cats })
-  } catch (err: any) {
+  } catch (err: unknown) {
     return NextResponse.json({ ok: false, error: String(err) }, { status: 500 })
   }
 }

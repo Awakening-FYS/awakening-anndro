@@ -29,7 +29,7 @@ export default function Navbar() {
                 await signOut({ callbackUrl: pathname || '/', redirect: false })
                 try {
                   router.refresh()
-                } catch (e) {
+                } catch {
                   // fallback to hard reload
                   window.location.href = pathname || '/'
                 }

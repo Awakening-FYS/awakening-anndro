@@ -1,5 +1,17 @@
 
-import { createClient } from '@supabase/supabase-js'
-const supabaseUrl = 'https://dhrswedgpvtgccykmbki.supabase.co'
-const supabaseKey = process.env.SUPABASE_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
+// Minimal supabase types for the project. Adjust if you generate full types from your Supabase schema.
+export type Json = string | number | boolean | null | { [key: string]: Json } | Json[]
+
+export type Database = {
+	public: {
+		Tables: {
+			[key: string]: unknown
+		}
+		Views: {
+			[key: string]: unknown
+		}
+		Functions: {
+			[key: string]: unknown
+		}
+	}
+}

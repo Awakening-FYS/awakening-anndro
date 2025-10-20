@@ -15,7 +15,7 @@ export const authOptions: AuthOptions = {
         if (!credentials) return null
 
         const { email, password } = credentials
-        console.log('[nextauth] authorize called for', email)
+  // authorization called for email
 
         // 尝试精确匹配（maybeSingle 避免单条结果报错），找不到再尝试不区分大小写的 ilike
         const res1 = await supabase
@@ -24,7 +24,8 @@ export const authOptions: AuthOptions = {
           .eq("email", email)
           .maybeSingle()
 
-        let user: any = res1.data ?? null
+  let user: Record<string, unknown> | null = null
+  if (res1.data) user = res1.data as Record<string, unknown>
         if (res1.error) {
           console.warn('[nextauth] supabase exact-match error (ignored):', res1.error)
         }
@@ -39,21 +40,26 @@ export const authOptions: AuthOptions = {
             console.error('[nextauth] supabase ilike error:', res2.error)
             return null
           }
-          user = res2.data ?? null
+          if (res2.data) user = res2.data as Record<string, unknown>
         }
 
-        console.log('[nextauth] user fetched:', user ? { id: user.id, email: user.email } : null)
-
-        if (!user || !user.password) {
+        if (!user) {
           console.warn('[nextauth] user not found or missing password')
           return null
         }
 
-        const isValid = await bcrypt.compare(password, user.password)
-        console.log('[nextauth] password compare result:', isValid)
+        const u = user as Record<string, unknown>
+        const pw = typeof u.password === 'string' ? u.password : null
+        if (!pw) {
+          console.warn('[nextauth] user not found or missing password')
+          return null
+        }
+
+        const isValid = await bcrypt.compare(password, pw)
+  // password compare result
         if (!isValid) return null
 
-        return { id: user.id, name: user.name, email: user.email }
+  return { id: String(u.id), name: String(u.name), email: String(u.email) }
       },
     }),
   ],

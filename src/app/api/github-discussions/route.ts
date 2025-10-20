@@ -1,3 +1,5 @@
+// Snapshot of src/app/api/github-discussions/route.ts on 2025-10-19
+
 import { NextResponse } from 'next/server'
 
 type Body = {
@@ -14,7 +16,7 @@ if (!GITHUB_TOKEN || !GITHUB_REPO || !GITHUB_DISCUSSION_CATEGORY_ID) {
   console.warn('GitHub Discussions API route missing required env vars')
 }
 
-async function githubGraphQL(query: string, variables?: any) {
+async function githubGraphQL(query: string, variables?: unknown) {
   const res = await fetch('https://api.github.com/graphql', {
     method: 'POST',
     headers: {
@@ -24,15 +26,16 @@ async function githubGraphQL(query: string, variables?: any) {
     body: JSON.stringify({ query, variables }),
   })
 
-  let json: any = null
+  let json: unknown = null
   try {
     json = await res.json()
-  } catch (e) {
+  } catch {
     return { ok: res.ok, status: res.status, json: null, errors: [{ message: 'invalid-json' }] }
   }
 
-  if (!res.ok || json?.errors) {
-    return { ok: false, status: res.status, json, errors: json?.errors }
+  const j = json as Record<string, unknown> | null
+  if (!res.ok || (j && 'errors' in j)) {
+    return { ok: false, status: res.status, json, errors: j ? (j['errors'] as unknown) : undefined }
   }
 
   return { ok: true, status: res.status, json }
@@ -61,11 +64,27 @@ export async function POST(request: Request) {
       console.error('GitHub repoId error', repoRes)
       return NextResponse.json({ error: 'GitHub repoId error', detail: repoRes.json || repoRes }, { status: 502 })
     }
-    const repositoryId = repoRes.json?.data?.repository?.id
-    if (!repositoryId) {
-      console.error('Could not get repository id', repoRes.json)
-      return NextResponse.json({ error: 'Could not get repository id', detail: repoRes.json }, { status: 500 })
+  // Safely extract repository id from GraphQL JSON without using `any`.
+  let repositoryId: string | undefined
+  try {
+    const repoJson = repoRes.json as unknown
+    if (repoJson && typeof repoJson === 'object' && 'data' in repoJson) {
+      const data = (repoJson as Record<string, unknown>)['data'] as unknown
+      if (data && typeof data === 'object' && 'repository' in (data as Record<string, unknown>)) {
+        const repository = (data as Record<string, unknown>)['repository'] as unknown
+        if (repository && typeof repository === 'object' && 'id' in (repository as Record<string, unknown>)) {
+          const id = (repository as Record<string, unknown>)['id']
+          if (typeof id === 'string') repositoryId = id
+        }
+      }
     }
+  } catch {
+    repositoryId = undefined
+  }
+  if (!repositoryId) {
+    console.error('Could not get repository id', repoRes.json)
+    return NextResponse.json({ error: 'Could not get repository id', detail: repoRes.json }, { status: 500 })
+  }
 
     // discussion title uses the page path (unique)
     const discussionTitle = `Comments: ${path}`
@@ -81,24 +100,55 @@ export async function POST(request: Request) {
       console.error('GitHub listDiscussions error', listRes)
       return NextResponse.json({ error: 'GitHub listDiscussions error', detail: listRes.json || listRes }, { status: 502 })
     }
-    const nodes = listRes.json?.data?.repository?.discussions?.nodes || []
-    const existing = nodes.find((n: any) => n.title === discussionTitle)
+  // Safely extract discussion nodes
+  let nodes: Array<Record<string, unknown>> = []
+  try {
+    const listJson = listRes.json as unknown
+    if (listJson && typeof listJson === 'object' && 'data' in listJson) {
+      const data = (listJson as Record<string, unknown>)['data'] as unknown
+      if (data && typeof data === 'object' && 'repository' in (data as Record<string, unknown>)) {
+        const repository = (data as Record<string, unknown>)['repository'] as unknown
+        if (repository && typeof repository === 'object' && 'discussions' in (repository as Record<string, unknown>)) {
+          const discussions = ((repository as Record<string, unknown>)['discussions'] as unknown) as Record<string, unknown>
+          if (discussions && typeof discussions === 'object' && 'nodes' in discussions) {
+            const n = (discussions['nodes'] as unknown)
+            if (Array.isArray(n)) nodes = n as Array<Record<string, unknown>>
+          }
+        }
+      }
+    }
+  } catch {
+    nodes = []
+  }
+  const existing = nodes.find((n) => typeof n.title === 'string' && (n.title as string) === discussionTitle)
 
     if (existing) {
-      // add a comment
-      // The GraphQL payload shape can change; avoid selecting a field that may not exist on all API versions.
-      // Request a minimal, stable field (clientMutationId) to avoid triggering schema errors.
-      const addCommentMutation = `mutation addComment($discussionId: ID!, $body: String!) {
-        addDiscussionComment(input: { discussionId: $discussionId, body: $body }) { clientMutationId }
-      }`
-      const bodyText = `**${name}** 留言:
-\n${text}`
-      const commentRes = await githubGraphQL(addCommentMutation, { discussionId: existing.id, body: bodyText })
+      // add a comment — different GitHub GraphQL schemas expose different payload fields.
+      const bodyText = `**${name}** 留言:\n${text}`
+
+      // Try 'comment' first, fall back to 'discussionComment' if schema differs.
+      const tryMutation = async (fieldName: 'comment' | 'discussionComment') => {
+        const addCommentMutation = `mutation addComment($discussionId: ID!, $body: String!) {
+          addDiscussionComment(input: { discussionId: $discussionId, body: $body }) { ${fieldName} { id } }
+        }`
+        return githubGraphQL(addCommentMutation, { discussionId: String((existing as Record<string, unknown>)['id']), body: bodyText })
+      }
+
+      // first attempt
+      let commentRes = await tryMutation('comment')
+      if (!commentRes.ok) {
+        // If the error mentions the field name, try the alternative
+        const errMsg = JSON.stringify(commentRes.errors || commentRes.json || '')
+        if (errMsg.includes("'comment'") || errMsg.includes('comment')) {
+          commentRes = await tryMutation('discussionComment')
+        }
+      }
+
       if (!commentRes.ok) {
         console.error('GitHub addDiscussionComment error', commentRes)
         return NextResponse.json({ error: 'Failed to add comment', detail: commentRes.json || commentRes }, { status: 502 })
       }
-      // success (we didn't request the created comment object for compatibility)
+
       return NextResponse.json({ success: true, created: 'comment', result: commentRes.json })
     }
 
@@ -123,72 +173,177 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
-  // GET /api/github-discussions?path=/blog/slug
   if (!GITHUB_TOKEN || !GITHUB_REPO) {
     return NextResponse.json({ error: 'GitHub integration not configured' }, { status: 500 })
   }
 
+  const url = new URL(request.url)
+  const path = url.searchParams.get('path')
+  if (!path) return NextResponse.json({ error: 'Missing path query' }, { status: 400 })
+
+  const [owner, repo] = GITHUB_REPO.split('/')
+
   try {
-    const url = new URL(request.url)
-    const path = url.searchParams.get('path')
-    if (!path) return NextResponse.json({ comments: [] })
+    // 1) get repository id (reuse repoQuery)
+    const repoQuery = `query repoId($owner: String!, $name: String!) { repository(owner: $owner, name: $name) { id } }`
+    const repoRes = await githubGraphQL(repoQuery, { owner, name: repo })
+    if (!repoRes.ok) {
+      console.error('GitHub repoId error', repoRes)
+      return NextResponse.json({ error: 'GitHub repoId error', detail: repoRes.json || repoRes }, { status: 502 })
+    }
 
-    const [owner, repo] = GITHUB_REPO.split('/')
+    let repositoryId: string | undefined
+    try {
+      const repoJson = repoRes.json as unknown
+      if (repoJson && typeof repoJson === 'object' && 'data' in repoJson) {
+        const data = (repoJson as Record<string, unknown>)['data'] as unknown
+        if (data && typeof data === 'object' && 'repository' in (data as Record<string, unknown>)) {
+          const repository = (data as Record<string, unknown>)['repository'] as unknown
+          if (repository && typeof repository === 'object' && 'id' in (repository as Record<string, unknown>)) {
+            const id = (repository as Record<string, unknown>)['id']
+            if (typeof id === 'string') repositoryId = id
+          }
+        }
+      }
+    } catch {
+      repositoryId = undefined
+    }
+    if (!repositoryId) {
+      console.error('Could not get repository id', repoRes.json)
+      return NextResponse.json({ error: 'Could not get repository id', detail: repoRes.json }, { status: 500 })
+    }
 
-    const listWithCommentsQ = `query listDiscussionsWithComments($owner: String!, $name: String!) {
+    // discussion title uses the page path
+    const discussionTitle = `Comments: ${path}`
+
+    // list discussions and find matching title
+    const listQuery = `query listDiscussions($owner: String!, $name: String!) {
       repository(owner: $owner, name: $name) {
-        discussions(first: 100) {
-          nodes {
-            id
-            title
-            body
-            createdAt
-            comments(first: 100) {
-              nodes {
-                author { login }
-                body
-                createdAt
-              }
+        discussions(first: 100) { nodes { id title } }
+      }
+    }`
+    const listRes = await githubGraphQL(listQuery, { owner, name: repo })
+    if (!listRes.ok) {
+      console.error('GitHub listDiscussions error', listRes)
+      return NextResponse.json({ error: 'GitHub listDiscussions error', detail: listRes.json || listRes }, { status: 502 })
+    }
+
+    let nodes: Array<Record<string, unknown>> = []
+    try {
+      const listJson = listRes.json as unknown
+      if (listJson && typeof listJson === 'object' && 'data' in listJson) {
+        const data = (listJson as Record<string, unknown>)['data'] as unknown
+        if (data && typeof data === 'object' && 'repository' in (data as Record<string, unknown>)) {
+          const repository = (data as Record<string, unknown>)['repository'] as unknown
+          if (repository && typeof repository === 'object' && 'discussions' in (repository as Record<string, unknown>)) {
+            const discussions = ((repository as Record<string, unknown>)['discussions'] as unknown) as Record<string, unknown>
+            if (discussions && typeof discussions === 'object' && 'nodes' in discussions) {
+              const n = (discussions['nodes'] as unknown)
+              if (Array.isArray(n)) nodes = n as Array<Record<string, unknown>>
             }
           }
         }
       }
-    }`
+    } catch {
+      nodes = []
+    }
+    const existing = nodes.find((n) => typeof n.title === 'string' && (n.title as string) === discussionTitle)
 
-    const listRes = await githubGraphQL(listWithCommentsQ, { owner, name: repo })
-    if (!listRes.ok) {
-      console.error('GitHub listDiscussionsWithComments error', listRes)
-      return NextResponse.json({ error: 'GitHub listDiscussions error', detail: listRes.json || listRes }, { status: 502 })
+    if (!existing) {
+      // no discussion yet -> no comments
+      return NextResponse.json({ comments: [] })
     }
 
-    const nodes = listRes.json?.data?.repository?.discussions?.nodes || []
-    const discussionTitle = `Comments: ${path}`
-    const existing = nodes.find((n: any) => n.title === discussionTitle)
-    if (!existing) return NextResponse.json({ comments: [] })
+    const discussionId = String((existing as Record<string, unknown>)['id'])
 
-    const rawComments = existing.comments?.nodes || []
-    const comments = rawComments.map((c: any) => {
-      const body: string = c.body || ''
-      const nameMatch = body.match(/^\*\*(.+?)\*\*/)
-      const name = nameMatch ? nameMatch[1] : (c.author?.login || '用户')
-      const text = body.replace(/^(?:\*\*.+?\*\*\s*留言:\s*)/m, '').trim()
-      return { name, text, date: c.createdAt }
+    // fetch discussion initial body and discussion comments by node id
+    const commentsQuery = `query getComments($id: ID!) { node(id: $id) { ... on Discussion { body createdAt author { login } comments(first: 100) { nodes { body createdAt author { login } } } } } }`
+    const commentsRes = await githubGraphQL(commentsQuery, { id: discussionId })
+    if (!commentsRes.ok) {
+      console.error('GitHub comments query error', commentsRes)
+      return NextResponse.json({ error: 'Failed to fetch comments', detail: commentsRes.json || commentsRes }, { status: 502 })
+    }
+
+    // extract comment nodes safely
+    let commentNodes: Array<Record<string, unknown>> = []
+    try {
+      const cj = commentsRes.json as unknown
+      if (cj && typeof cj === 'object' && 'data' in cj) {
+        const data = (cj as Record<string, unknown>)['data'] as unknown
+        if (data && typeof data === 'object' && 'node' in (data as Record<string, unknown>)) {
+          const node = (data as Record<string, unknown>)['node'] as unknown
+          if (node && typeof node === 'object' && 'comments' in (node as Record<string, unknown>)) {
+            const comments = ((node as Record<string, unknown>)['comments'] as unknown) as Record<string, unknown>
+            if (comments && typeof comments === 'object' && 'nodes' in comments) {
+              const n = comments['nodes'] as unknown
+              if (Array.isArray(n)) commentNodes = n as Array<Record<string, unknown>>
+            }
+          }
+        }
+      }
+    } catch {
+      commentNodes = []
+    }
+
+    // Map commentNodes to { name, text, date }
+    const commentsOut = commentNodes.map((c) => {
+      const body = typeof c.body === 'string' ? c.body : ''
+      const createdAt = typeof c.createdAt === 'string' ? c.createdAt : ''
+      const author = (c.author && typeof c.author === 'object') ? (c.author as Record<string, unknown>) : null
+      const login = author && typeof author.login === 'string' ? author.login : undefined
+
+      // try to extract name from body pattern: **Name** 留言:\n...
+      const nameMatch = body.match(/^\s*\*\*(.+?)\*\*\s*留言[:：]?\s*\n?/) as RegExpMatchArray | null
+      const name = nameMatch ? nameMatch[1] : (login || '匿名')
+      let text = nameMatch ? body.replace(nameMatch[0], '').trim() : body.trim()
+      // Fallback: if text empty but body contains markdown, keep body
+      if (!text) text = body.trim()
+
+      return { name, text, date: createdAt ? new Date(createdAt).toISOString() : '' }
     })
 
-    // If the discussion has an initial body (we store the first post there), include it as the first comment
-    if (existing.body) {
-      const body: string = existing.body || ''
-      const nameMatch = body.match(/^\*\*(.+?)\*\*/)
-      const name = nameMatch ? nameMatch[1] : (/* no author on discussion body */ '用户')
-      const text = body.replace(/^(?:\*\*.+?\*\*\s*留言:\s*)/m, '').trim()
-      const discussionDate = existing.createdAt || null
-      // Put initial discussion body at the top
-      comments.unshift({ name, text, date: discussionDate })
+    // Sort comments chronologically (oldest first)
+    commentsOut.sort((a, b) => {
+      const ta = a.date ? new Date(a.date).getTime() : 0
+      const tb = b.date ? new Date(b.date).getTime() : 0
+      return ta - tb
+    })
+
+    // Also include the discussion's initial body as the first comment (if present)
+    try {
+      const cj = commentsRes.json as unknown
+      if (cj && typeof cj === 'object' && 'data' in cj) {
+        const data = (cj as Record<string, unknown>)['data'] as unknown
+        if (data && typeof data === 'object' && 'node' in (data as Record<string, unknown>)) {
+          const node = (data as Record<string, unknown>)['node'] as unknown
+          if (node && typeof node === 'object') {
+            const discBody = typeof (node as Record<string, unknown>)['body'] === 'string' ? (node as Record<string, unknown>)['body'] as string : ''
+            const discCreatedAt = typeof (node as Record<string, unknown>)['createdAt'] === 'string' ? (node as Record<string, unknown>)['createdAt'] as string : ''
+            const discAuthor = ((node as Record<string, unknown>)['author'] && typeof (node as Record<string, unknown>)['author'] === 'object') ? ((node as Record<string, unknown>)['author'] as Record<string, unknown>) : null
+            const discLogin = discAuthor && typeof discAuthor.login === 'string' ? discAuthor.login : undefined
+
+            if (discBody) {
+              const nameMatch = discBody.match(/^\s*\*\*(.+?)\*\*\s*留言[:：]?\s*\n?/) as RegExpMatchArray | null
+              const firstName = nameMatch ? nameMatch[1] : (discLogin || '匿名')
+              let firstText = nameMatch ? discBody.replace(nameMatch[0], '').trim() : discBody.trim()
+              if (!firstText) firstText = discBody.trim()
+              const firstComment = { name: firstName, text: firstText, date: discCreatedAt ? new Date(discCreatedAt).toISOString() : '' }
+              // place initial discussion at the start
+              commentsOut.unshift(firstComment)
+            }
+          }
+        }
+      }
+    } catch {
+      // ignore
     }
 
-    return NextResponse.json({ comments })
-  } catch (err: any) {
-    console.error('GET /api/github-discussions error', err)
+    // convert ISO dates back to locale strings for display
+    const commentsFinal = commentsOut.map((c) => ({ name: c.name, text: c.text, date: c.date ? new Date(c.date).toLocaleString() : '' }))
+
+    return NextResponse.json({ comments: commentsFinal })
+  } catch (err) {
+    console.error('GitHub Discussions GET error', err)
     return NextResponse.json({ error: String(err) }, { status: 500 })
   }
 }

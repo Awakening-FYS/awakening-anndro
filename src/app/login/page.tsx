@@ -1,12 +1,11 @@
 "use client"
 import { useState } from "react"
 import { signIn } from "next-auth/react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 
 export default function LoginPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -26,8 +25,9 @@ export default function LoginPage() {
 
     setLoading(false)
 
-  // read callbackUrl from the hook snapshot captured at component render
-  const callbackUrl = searchParams?.get("callbackUrl") || "/"
+    // read callbackUrl from the current location
+    const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams('')
+    const callbackUrl = params.get("callbackUrl") || "/"
 
     if (res?.error) {
       setError("邮箱或密码错误，请重试。")

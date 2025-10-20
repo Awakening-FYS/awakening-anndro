@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
     return NextResponse.json({ message: "注册成功", user: data })
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "注册失败" }, { status: 500 })
   }
 }
