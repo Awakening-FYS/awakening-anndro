@@ -189,3 +189,9 @@
 .prose td:nth-child(3) {
   width: 40%;
 }
+
+/* Prevent horizontal overflow which can reveal white gutters on mobile/scroll */
+html, body {
+  overflow-x: hidden;
+  margin: 0;
+}
