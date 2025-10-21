@@ -1,5 +1,6 @@
 "use client"
 import Link from "next/link"
+import Image from "next/image"
 import { useState, useEffect, useRef } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { usePathname, useRouter } from "next/navigation"
@@ -70,7 +71,19 @@ export default function Navbar() {
   className="backdrop-blur-sm bg-blue-200 dark:bg-gray-900/80 shadow-md dark:shadow-lg px-4 py-3 border-b border-transparent relative"
     >
       <div className="max-w-5xl mx-auto flex items-center justify-between">
-        <Link href="/" className="font-bold text-3xl no-underline text-red-700 dark:text-yellow-300">意识觉醒</Link>
+        <div className="flex items-center gap-3">
+          {/* logo placed before the site title, sized to navbar height via CSS variable */}
+          <div className="flex-shrink-0 rounded-full overflow-hidden" style={{ height: 'min(var(--navbar-height, 48px), 45px)', width: 'min(var(--navbar-height, 48px), 45px)' }}>
+            <Image
+              src="/images/source.png"
+              alt="site logo"
+              width={48}
+              height={48}
+              style={{ height: '100%', width: '100%', objectFit: 'cover' }}
+            />
+          </div>
+          <Link href="/" className="font-bold text-3xl no-underline text-red-700 dark:text-yellow-300">意识觉醒</Link>
+        </div>
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-1 flex-nowrap whitespace-nowrap">

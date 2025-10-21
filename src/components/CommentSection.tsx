@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 type Comment = {
   name: string
@@ -12,6 +14,7 @@ type Comment = {
 export default function CommentSection() {
   // Hooks 必须放在最顶端
   const { data: session } = useSession()
+  const pathname = usePathname()
   const [comments, setComments] = useState<Comment[]>([])
   const [name, setName] = useState("")
   const [text, setText] = useState("")
@@ -43,6 +46,13 @@ export default function CommentSection() {
       const user = session.user as { name?: string; email?: string }
       const displayName = user?.name || user?.email || "用户"
       setName(displayName)
+    }
+  }, [session])
+
+  // Clear name when user logs out so the form doesn't keep the previous user's display name
+  useEffect(() => {
+    if (!session) {
+      setName("")
     }
   }, [session])
 
@@ -125,31 +135,33 @@ export default function CommentSection() {
   }, [])
 
   return (
-    <div className="mt-1 mb-1 border-t border-gray-300 pt-1 px-10">
-      <h2 className="text-2xl font-semibold mb-6">💬 留言区</h2>
+    <div id="comments" className="mt-1 mb-1 border-t border-gray-300 pt-1 px-10">
+      <h2 className="text-2xl font-semibold mb-2">💬 留言区</h2>
 
-      {!session && <p className="text-gray-500 mb-4">请先登录再发表评论</p>}
+      {!session && (
+        <p className="text-gray-500 mb-4">
+          请先{' '}
+          <Link
+            href={`/login?callbackUrl=${encodeURIComponent((pathname || '/') + '#comments')}`}
+            className="text-blue-600 hover:underline"
+          >
+            登录
+          </Link>{' '}
+          再发表评论
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4 mb-8">
-        {session?.user ? (
+        {session?.user && (
           <div className="w-full px-4 py-2 text-gray-800">
             {name}：
           </div>
-        ) : (
-          <input
-            type="text"
-            placeholder="你的名字"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500"
-            disabled={!session}
-          />
         )}
         <textarea
           placeholder="写下你的留言（最多 500 字）..."
           value={text}
           onChange={(e) => setText(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 h-28 focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-600 rounded-lg px-4 py-2 h-28 focus:ring-2 focus:ring-blue-1200"
           disabled={!session}
         />
 

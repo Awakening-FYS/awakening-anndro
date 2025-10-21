@@ -1,12 +1,10 @@
-"use client"
-
 import React from 'react';
 import Link from 'next/link';
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import ReCAPTCHA from "react-google-recaptcha"
+import LatestPosts from "@/components/LatestPosts"
+import ContactForm from "@/components/ContactForm"
 
 import Hero from "@/components/Hero"
 
@@ -20,44 +18,7 @@ export default function Home() {
     // 可根据实际数据结构补充字段
   };
   
-  const [recentPosts, setRecentPosts] = React.useState<Post[]>([]);
-  React.useEffect(() => {
-    fetch('/api/posts')
-      .then(res => res.json())
-      .then(data => setRecentPosts(data));
-  }, []);
-  const recaptchaRef = React.useRef<ReCAPTCHA>(null);
-  const [captcha, setCaptcha] = React.useState<string | null>(null);
-  async function handleContactSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    if (!captcha) {
-      alert("请先完成验证码验证");
-      return;
-    }
-    const data = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      message: formData.get('message'),
-      captcha,
-    };
-    const res = await fetch('/api/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-    if (res.ok) {
-      alert('发送成功！');
-      form.reset();
-      setCaptcha(null);
-      if (recaptchaRef.current) recaptchaRef.current.reset();
-    } else {
-      alert('发送失败，请稍后再试。');
-    }
-
-  }
-
+  
   return (
    <div className="min-h-screen flex flex-col bg-gradient-to-b from-green-200 via-blue-200 to-yellow-100">
           
@@ -116,32 +77,7 @@ export default function Home() {
       </section>
 
       {/* Articles */}
-      <section id="articles" className="py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <h2 className="text-2xl font-semibold mb-6">最新文章</h2>
-        <ul className="space-y-4">
-          {recentPosts.map((post: Post) => (
-            <li key={post.slug}>
-              <Link
-                href={`/blog/${post.slug}`}
-                className="text-blue-600 dark:text-blue-400 hover:underline"
-              >
-                {post.title}
-              </Link>
-              <span className="block text-sm text-gray-500">{post.date}</span>
-            </li>
-          ))}
-        </ul>
-        <div className="mt-6">
-          <Link
-            href="/blog"
-            className="text-blue-600 dark:text-blue-400 hover:underline"
-          >
-            查看所有文章 →
-          </Link>
-        </div>
-        </div>
-      </section>
+      <LatestPosts />
       
       
       {/* Courses */}
@@ -200,20 +136,7 @@ export default function Home() {
       <section id="contact" className="bg-gray-50 dark:bg-gray-900 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl font-semibold mb-6">联系我们</h2>
-          <form className="space-y-4" onSubmit={handleContactSubmit}>
-            <Input type="text" name="name" placeholder="你的名字" required />
-            <Input type="email" name="email" placeholder="你的邮箱" required />
-            <Textarea name="message" placeholder="你的信息..." rows={4} required />
-            <ReCAPTCHA
-              sitekey="6LeFXNwrAAAAALezWu6yS8Zhmpt-e8U0lxnDsIln"
-              ref={recaptchaRef}
-              onChange={setCaptcha}
-            />
-            <Button type="submit" className="rounded-full text-lg px-16 py-4 font-bold">
-              发送
-            </Button>
-          </form>
-          {/*<p className="text-xs text-gray-500 mt-4">表单信息将直接发送到我们的邮箱</p> */}
+          <ContactForm />
         </div>
       </section>
 
