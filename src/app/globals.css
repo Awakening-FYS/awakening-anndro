@@ -131,6 +131,15 @@
   border-radius: 0.5rem;
 }
 
+/* Make images responsive on small screens: scale to container width and preserve aspect ratio */
+.prose img,
+img {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 .prose pre {
   background-color: oklch(0.97 0 0);
   padding: 1rem;

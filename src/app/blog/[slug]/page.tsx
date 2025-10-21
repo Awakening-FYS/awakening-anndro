@@ -72,15 +72,22 @@ export default async function PostPage({ params }: Props) {
       </div>
 
       {/* ✅ 正文：仅渲染 content，不再包含 frontmatter */}
-      <article className="prose prose-lg dark:prose-invert px-10 prose-p:mb-6 prose-h2:mt-10 prose-h2:mb-4 prose-h3:mt-8 prose-h3:mb-3">
-        <MDXRemote
-          source={content}
-          options={{
-            mdxOptions: { remarkPlugins: [remarkGfm] },
-          }}
-          components={{ Spacer }}
-        />
-      </article>
+          <article className="prose prose-lg dark:prose-invert px-10 prose-p:mb-6 prose-h2:mt-10 prose-h2:mb-4 prose-h3:mt-8 prose-h3:mb-3">
+            <MDXRemote
+              source={content}
+              options={{
+                mdxOptions: { remarkPlugins: [remarkGfm] },
+              }}
+              components={{
+                Spacer,
+                // Make raw MDX images responsive on mobile
+                img: ({ src, alt, className }: any) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={src} alt={alt} className={(className || "") + " w-full h-auto rounded-lg"} />
+                ),
+              }}
+            />
+          </article>
 
       {/* 上一篇 / 下一篇 */}
       <div className="flex justify-between mt-12 pt-6 border-t px-10 mb-5">
