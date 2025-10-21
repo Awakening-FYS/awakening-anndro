@@ -85,6 +85,13 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* Page gradient tokens (light mode) */
+:root {
+  --page-gradient-start: #b9f8cf; /* green-200 */
+  --page-gradient-via: #bedbff;   /* blue-200 */
+  --page-gradient-end: #fef9c2;   /* yellow-100 */
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -117,6 +124,19 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* Page gradient tokens (dark mode) */
+.dark {
+  --page-gradient-start: #153f2e; /* darker green */
+  --page-gradient-via: #1b3350;   /* darker blue */
+  --page-gradient-end: #6b5f1a;   /* muted yellow */
+}
+
+@layer utilities {
+  .bg-page-gradient {
+    background-image: linear-gradient(to bottom, var(--page-gradient-start), var(--page-gradient-via), var(--page-gradient-end));
+  }
 }
 
 @layer base {

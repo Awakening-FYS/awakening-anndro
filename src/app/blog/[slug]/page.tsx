@@ -40,9 +40,9 @@ export default async function PostPage({ params }: Props) {
 
   // ✅ 渲染页面
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-green-200 via-blue-200 to-yellow-100">
+    <div className="min-h-screen flex flex-col bg-page-gradient">
       {/* 顶部导航 */}
-  <div className="flex justify-between items-center mt-6 mb-6 px-4 sm:px-6">
+      <div className="flex justify-between items-center mt-6 mb-6 px-4 sm:px-6">
         <Link href="/blog" className="text-blue-600 hover:underline">
           ← 返回博客
         </Link>
