@@ -16,7 +16,8 @@ export default function BlogPage() {
           alt={latestPost.title}
           width={800}
           height={400}
-          className="rounded-lg mb-8"
+          sizes="(max-width: 768px) 100vw, 800px"
+          className="rounded-lg mb-8 w-full h-auto"
         />
       )}
       {/* 列出所有博客链接 */}

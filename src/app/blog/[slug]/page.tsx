@@ -78,7 +78,14 @@ export default async function PostPage({ params }: Props) {
           options={{
             mdxOptions: { remarkPlugins: [remarkGfm] },
           }}
-          components={{ Spacer }}
+          components={{
+            Spacer,
+            // Make raw MDX images responsive on mobile
+            img: ({ src, alt, className }: React.ImgHTMLAttributes<HTMLImageElement>) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={src} alt={alt} className={(className || "") + " w-full h-auto rounded-lg"} />
+            ),
+          }}
         />
       </article>
 

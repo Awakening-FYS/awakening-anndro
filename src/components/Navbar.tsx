@@ -61,7 +61,6 @@ export default function Navbar() {
   // Close menu on pathname change
   useEffect(() => {
     closeMenu()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
 
   return (
