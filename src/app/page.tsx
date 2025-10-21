@@ -64,7 +64,8 @@ export default function Home() {
       <Hero />
       
       {/* About */}
-      <section id="about" className="max-w-4xl mx-auto px-6 py-16">
+      <section id="about" className="py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
         
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold">关于我们</h2>
@@ -78,11 +79,12 @@ export default function Home() {
         <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
           意识觉醒致力于帮助人们通过正念练习与冥想，提升觉察力与内在平衡。我们相信每个人都能在繁杂世界中找到属于自己的安宁与力量。
         </p>
+        </div>
       </section>
 
       {/* Practice */}
-      <section id="practice" className="bg-gray-50 dark:bg-gray-900 py-16 px-6">
-        <div className="max-w-6xl mx-auto">
+      <section id="practice" className="bg-gray-50 dark:bg-gray-900 py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl font-semibold mb-10 text-center">每日练习</h2>
           <div className="grid gap-6 md:grid-cols-3">
             <Card>
@@ -114,7 +116,8 @@ export default function Home() {
       </section>
 
       {/* Articles */}
-      <section id="articles" className="max-w-4xl mx-auto px-6 py-16">
+      <section id="articles" className="py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <h2 className="text-2xl font-semibold mb-6">最新文章</h2>
         <ul className="space-y-4">
           {recentPosts.map((post: Post) => (
@@ -137,12 +140,13 @@ export default function Home() {
             查看所有文章 →
           </Link>
         </div>
+        </div>
       </section>
       
       
       {/* Courses */}
-      <section id="courses" className="bg-gray-50 dark:bg-gray-900 py-16 px-6">
-        <div className="max-w-4xl mx-auto">
+      <section id="courses" className="bg-gray-50 dark:bg-gray-900 py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl font-semibold mb-6 text-center">课程推荐</h2>
           <div className="grid gap-6 md:grid-cols-2">
             <Card>
@@ -166,7 +170,8 @@ export default function Home() {
       </section>
 
       {/* Newsletter */}
-      <section id="newsletter" className="max-w-4xl mx-auto px-6 py-16">
+      <section id="newsletter" className="py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <h2 className="text-2xl font-semibold mb-6 text-center">订阅通讯</h2>
         <form
           action="https://xxxx.us21.list-manage.com/subscribe/post?u=你的ID&amp;id=列表ID"
@@ -188,11 +193,12 @@ export default function Home() {
             我们尊重你的时间，不会发送垃圾邮件。
           </p>
         </form>
+        </div>
       </section>
 
       {/* Contact */}
-      <section id="contact" className="bg-gray-50 dark:bg-gray-900 py-16 px-6">
-        <div className="max-w-4xl mx-auto">
+      <section id="contact" className="bg-gray-50 dark:bg-gray-900 py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl font-semibold mb-6">联系我们</h2>
           <form className="space-y-4" onSubmit={handleContactSubmit}>
             <Input type="text" name="name" placeholder="你的名字" required />
@@ -212,7 +218,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="px-6 py-6 border-t text-center text-sm text-gray-500">
+      <footer className="px-4 sm:px-6 py-6 border-t text-center text-sm text-gray-500">
         © {new Date().getFullYear()} 意识觉醒. 保留所有权利.
       </footer>
     </div>

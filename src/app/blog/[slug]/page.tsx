@@ -42,7 +42,7 @@ export default async function PostPage({ params }: Props) {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-green-200 via-blue-200 to-yellow-100">
       {/* 顶部导航 */}
-      <div className="flex justify-between items-center mt-6 mb-6 px-6">
+  <div className="flex justify-between items-center mt-6 mb-6 px-4 sm:px-6">
         <Link href="/blog" className="text-blue-600 hover:underline">
           ← 返回博客
         </Link>
@@ -66,13 +66,13 @@ export default async function PostPage({ params }: Props) {
       )}
 
       {/* 标题 + 日期 */}
-      <div className="flex items-center justify-between mb-4 px-10">
+  <div className="flex items-center justify-between mb-4 px-4 sm:px-10">
         <h1 className="text-3xl font-bold">{data.title}</h1>
         <span className="text-gray-600">{data.date}</span>
       </div>
 
       {/* ✅ 正文：仅渲染 content，不再包含 frontmatter */}
-      <article className="prose prose-lg dark:prose-invert px-10 prose-p:mb-6 prose-h2:mt-10 prose-h2:mb-4 prose-h3:mt-8 prose-h3:mb-3">
+  <article className="prose prose-lg dark:prose-invert px-4 sm:px-10 prose-p:mb-6 prose-h2:mt-10 prose-h2:mb-4 prose-h3:mt-8 prose-h3:mb-3">
         <MDXRemote
           source={content}
           options={{
@@ -90,7 +90,7 @@ export default async function PostPage({ params }: Props) {
       </article>
 
       {/* 上一篇 / 下一篇 */}
-      <div className="flex justify-between mt-12 pt-6 border-t px-10 mb-5">
+  <div className="flex justify-between mt-12 pt-6 border-t px-4 sm:px-10 mb-5">
         {prevPost ? (
           <Link href={`/blog/${prevPost.slug}`} className="text-blue-600 hover:underline">
             ← 上一篇：{prevPost.title}

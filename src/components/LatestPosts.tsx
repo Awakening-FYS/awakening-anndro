@@ -5,7 +5,7 @@ export default function LatestPosts() {
   const recentPosts = getRecentPosts(3)
 
   return (
-    <section id="articles" className="max-w-4xl mx-auto px-6 py-16">
+  <section id="articles" className="max-w-4xl mx-auto px-4 sm:px-6 py-16">
       <h2 className="text-2xl font-semibold mb-6">最新文章</h2>
       <ul className="space-y-4">
         {recentPosts.map((post) => (
