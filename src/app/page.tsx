@@ -25,7 +25,7 @@ export default function Home() {
       <Hero />
       
       {/* About */}
-      <section id="about" className="py-16">
+      <section id="about" className="py-5">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
         
         <div className="flex items-center justify-between mb-6">

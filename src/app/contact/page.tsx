@@ -42,7 +42,7 @@ export default function ContactPage() {
 				<div className="min-h-screen flex flex-col py-10 bg-page-gradient">
 					<section id="contact" className="">
 						<div className="max-w-4xl mx-auto">
-							<h2 className="text-2xl font-semibold mb-6">联系我们</h2>
+							<h2 className="text-3xl font-semibold mb-6">联系我们</h2>
 							<form className="space-y-4" onSubmit={handleSubmit}>
 								<Input type="text" name="name" placeholder="你的名字" required />
 								<Input type="email" name="email" placeholder="你的邮箱" required />
