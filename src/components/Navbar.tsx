@@ -68,11 +68,11 @@ export default function Navbar() {
   return (
   <nav
       ref={navRef}
-      style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999 }}
-  className="backdrop-blur-sm bg-background/80 dark:bg-card/90 shadow-md dark:shadow-lg px-4 py-3 border-b border-transparent relative"
+    style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999, backgroundColor: 'var(--navbar-bg)', borderBottomColor: 'var(--navbar-border)' }}
+  className="backdrop-blur-sm shadow-md dark:shadow-lg px-4 py-3 border-b relative"
     >
       <div className="max-w-5xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {/* logo placed before the site title, sized to navbar height via CSS variable */}
           <div className="flex-shrink-0 rounded-full overflow-hidden" style={{ height: 'min(var(--navbar-height, 48px), 45px)', width: 'min(var(--navbar-height, 48px), 45px)' }}>
             <Image
@@ -83,61 +83,73 @@ export default function Navbar() {
               style={{ height: '100%', width: '100%', objectFit: 'cover' }}
             />
           </div>
-          <Link href="/" className="font-bold text-3xl no-underline" >意识觉醒</Link>
+          <Link href="/" className="site-wordmark no-underline" aria-label="意识觉醒 - 返回首页">
+            {/* Use plain text for the wordmark to reduce reserved width and improve responsiveness */}
+            <span className="site-title" role="img" aria-hidden="false">意识觉醒</span>
+          </Link>
         </div>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-1 flex-nowrap whitespace-nowrap">
+        <div className="hidden md:flex items-center gap-2 flex-nowrap whitespace-nowrap">
           <Link href="/" className="font-bold text-lg px-4 py-1 rounded hover:bg-background/10 text-foreground transition no-underline">首页</Link>
           <Link href="/about" className="font-bold text-lg px-4 py-1 rounded hover:bg-background/10 text-foreground transition no-underline">关于</Link>
           <Link href="/practice" className="font-bold text-lg px-4 py-1 rounded hover:bg-background/10 text-foreground transition no-underline">练习</Link>
           <Link href="/blog" className="font-bold text-lg px-4 py-1 rounded hover:bg-background/10 text-foreground transition no-underline">文章</Link>
           <Link href="/contact" className="font-bold text-lg px-4 py-1 rounded hover:bg-background/10 text-foreground transition no-underline">联系</Link>
+          <div className="ml-auto flex items-center gap-2">
+            {session?.user ? (
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-800 dark:text-gray-200">欢迎，{session.user.name ?? session.user.email}</span>
+                <button
+                  onClick={async () => {
+                    await signOut({ callbackUrl: pathname || '/', redirect: false })
+                    try { router.refresh() } catch { window.location.href = pathname || '/' }
+                  }}
+                  className="font-bold text-sm px-2 py-1 rounded bg-red-600 hover:bg-red-700 text-white transition"
+                >
+                  退出
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Link href={`/login?callbackUrl=${encodeURIComponent(pathname || '/')}`} className="font-bold text-lg px-6 py-1 rounded bg-blue-700 hover:bg-blue-800 text-white transition no-underline">登录</Link>
+                <Link href="/register" className="font-bold text-lg px-6 py-1 rounded bg-green-700 hover:bg-green-800 text-white transition no-underline">注册</Link>
+              </div>
+            )}
 
-          {session?.user ? (
-            <div className="ml-6 flex items-center space-x-2">
-              <ThemeToggle />
-              <span className="text-sm text-gray-800 dark:text-gray-200">欢迎，{session.user.name ?? session.user.email}</span>
-              <button
-                onClick={async () => {
-                  await signOut({ callbackUrl: pathname || '/', redirect: false })
-                  try { router.refresh() } catch { window.location.href = pathname || '/' }
-                }}
-                className="font-bold text-sm px-2 py-1 rounded bg-red-600 hover:bg-red-700 text-white transition"
-              >
-                退出
-              </button>
+            <div className="ml-auto flex-shrink-0">
+              <ThemeToggle vertical />
             </div>
-          ) : (
-            <div className="ml-6 flex items-center space-x-2">
-              <ThemeToggle />
-              <Link href={`/login?callbackUrl=${encodeURIComponent(pathname || '/')}`} className="font-bold text-lg px-6 py-1 rounded bg-blue-700 hover:bg-blue-800 text-white transition no-underline">登录</Link>
-              <Link href="/register" className="font-bold text-lg px-6 py-1 rounded bg-green-700 hover:bg-green-800 text-white transition no-underline">注册</Link>
-            </div>
-          )}
+          </div>
         </div>
 
         {/* Mobile hamburger with CSS fallback */}
         <div className="md:hidden">
           {/* Button toggles React state and keeps the hidden checkbox in sync for the CSS fallback. */}
-          <button
-            onClick={() => {
-              setOpen((v) => {
-                const next = !v
-                // keep the hidden checkbox in sync so the CSS peer selector matches
-                try { if (toggleInputRef.current) toggleInputRef.current.checked = next } catch {}
-                return next
-              })
-            }}
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            aria-label="Toggle menu"
-            className="p-2 rounded bg-background/10 dark:bg-card inline-flex"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-800 dark:text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={open ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-            </svg>
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            {/* Keep the ThemeToggle visible on small screens next to the hamburger */}
+            <div className="flex-shrink-0">
+              <ThemeToggle />
+            </div>
+            <button
+              onClick={() => {
+                setOpen((v) => {
+                  const next = !v
+                  // keep the hidden checkbox in sync so the CSS peer selector matches
+                  try { if (toggleInputRef.current) toggleInputRef.current.checked = next } catch {}
+                  return next
+                })
+              }}
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+              aria-label="Toggle menu"
+              className="p-2 rounded bg-background/10 dark:bg-card inline-flex"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={open ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
