@@ -39,8 +39,8 @@ export default function ContactPage() {
 	}
 
 			return (
-				<div className="min-h-screen flex flex-col bg-gradient-to-b from-green-200 via-blue-200 to-yellow-100">
-					<section id="contact" className="bg-gray-50 dark:bg-gray-900 py-16 px-6 flex-1">
+				<div className="min-h-screen flex flex-col py-10 bg-page-gradient">
+					<section id="contact" className="">
 						<div className="max-w-4xl mx-auto">
 							<h2 className="text-2xl font-semibold mb-6">联系我们</h2>
 							<form className="space-y-4" onSubmit={handleSubmit}>

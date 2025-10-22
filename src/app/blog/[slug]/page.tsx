@@ -43,7 +43,7 @@ export default async function PostPage({ params }: Props) {
     <div className="min-h-screen flex flex-col">
       {/* Full-bleed gradient wrapper using calc margins so it spans viewport width
           even when rendered inside a centered parent. */}
-      <div className="bg-page-gradient" style={{ width: '100vw', marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)' }}>
+      <div className="bg-page-gradient md:bg-transparent">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-5">
           {/* 顶部导航 (remove top margin so it sits close to the fixed navbar) */}
           <div className="flex justify-between items-center mt-0 mb-6">
@@ -57,13 +57,12 @@ export default async function PostPage({ params }: Props) {
 
           {/* 封面图（优先 frontmatter 中的 coverImage） */}
           {data.coverImage && (
-            <div className="max-w-full mx-auto mb-1 overflow-hidden">
+            <div className="w-full mx-auto mb-1 overflow-hidden rounded-lg relative h-48 md:h-64 border-1 border-blue-500">
               <Image
                 src={data.coverImage}
-                alt={data.title}
-                width={800}
-                height={400}
-                className="rounded-lg object-cover w-full h-auto"
+                alt={data.title}                
+                fill
+                className="object-cover object-[50%_50%]" 
                 priority
               />
             </div>

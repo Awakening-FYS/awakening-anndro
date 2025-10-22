@@ -82,7 +82,7 @@ export default function Navbar() {
               style={{ height: '100%', width: '100%', objectFit: 'cover' }}
             />
           </div>
-          <Link href="/" className="font-bold text-3xl no-underline text-red-700 dark:text-yellow-300">意识觉醒</Link>
+          <Link href="/" className="font-bold text-3xl no-underline text-black-1200 dark:text-yellow-300">意识觉醒</Link>
         </div>
 
         {/* Desktop links */}
