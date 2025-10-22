@@ -20,14 +20,14 @@ export default function LatestPosts() {
   return (
     <section id="articles" className="w-full py-0 relative">
       {/* absolute image on md that spans the section height */}
-      <div className="hidden md:block absolute top-0 left-0 bottom-0 w-[440px] overflow-hidden">
-        <Image src={src} alt={latest?.title ?? '最新文章'} fill className="object-cover" />
+        <div className="hidden md:block absolute top-0 left-0 bottom-0 w-[440px] overflow-hidden">
+        <Image src={src} alt={latest?.title ?? '最新文章'} fill className="object-cover" sizes="(min-width: 768px) 440px, 100vw" />
       </div>
       {/* Two-column layout on md+: left image column + right list column */}
   <div className="max-w-5xl mx-auto px-4 sm:px-6 md:pl-[560px] text-left">
         {/* stacked image for small screens */}
         <div className="md:hidden w-full h-40 mb-4 overflow-hidden relative">
-          <Image src={src} alt={latest?.title ?? '最新文章'} fill className="object-cover" />
+          <Image src={src} alt={latest?.title ?? '最新文章'} fill className="object-cover" sizes="100vw" />
         </div>
 
         <h2 className="text-2xl font-semibold mb-2">最新文章</h2>

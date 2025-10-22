@@ -87,14 +87,15 @@
 
 /* Page gradient tokens (light mode) */
 :root {
-  --page-gradient-start: #b9f8cf; /* green-200 */
-  --page-gradient-via: #bedbff;   /* blue-200 */
-  --page-gradient-end: #fef9c2;   /* yellow-100 */
+  --page-gradient-start: #BEEBD8; /* pale mint — 柔和绿色起始 */
+  --page-gradient-via:   #CFE8FF; /* soft sky  — 温和的天蓝中间色 */
+  --page-gradient-end:   #FFF3CC; /* warm cream — 暖奶油结束色 */
 }
+
 
 .dark {
   /* use a solid dark gray for reliable dark-mode page background */
-  --background: #0b1220;
+  --background: rgb(48 48 48);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -126,12 +127,10 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
-
-/* Page gradient tokens (dark mode) */
 .dark {
-  --page-gradient-start: #153f2e; /* darker green */
-  --page-gradient-via: #1b3350;   /* darker blue */
-  --page-gradient-end: #6b5f1a;   /* muted yellow */
+  --page-gradient-start: #071B22; /* deep teal  — 极深的蓝绿色（近黑） */
+  --page-gradient-via:   #0F2E3B; /* teal navy  — 有点冷调的海军蓝/青 */
+  --page-gradient-end:   #21343B; /* muted slate — 带点灰度的石板色 */
 }
 
 @layer utilities {
@@ -163,7 +162,7 @@
 }
 
 .prose th {
-  @apply bg-gray-100 border border-red-300 px-4 py-2  font-semibold;
+  @apply bg-card/90 border border-red-300 px-4 py-2  font-semibold;
 }
 
 .prose td {

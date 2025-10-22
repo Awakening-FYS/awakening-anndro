@@ -13,7 +13,7 @@ export const dynamic = "force-static" // 或 "force-dynamic"
 export default function Home() {
   
   return (
-   <div className="min-h-screen flex flex-col bg-gradient-to-b from-green-200 via-blue-200 to-yellow-100">
+   <div className="min-h-screen flex flex-col bg-page-gradient">
           
       <Hero />
       
@@ -36,8 +36,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Practice */}
-      <section id="practice" className="bg-gray-50 dark:bg-gray-900 py-16">
+  {/* Practice */}
+  <section id="practice" className="py-16" style={{ backgroundColor: 'var(--background)' }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl font-semibold mb-10 text-center">每日练习</h2>
           <div className="grid gap-6 md:grid-cols-3">
@@ -74,7 +74,7 @@ export default function Home() {
       
       
       {/* Courses */}
-      <section id="courses" className="bg-gray-50 dark:bg-gray-900 py-16">
+      <section id="courses" className="py-16" style={{ backgroundColor: 'var(--background)' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl font-semibold mb-6 text-center">课程推荐</h2>
           <div className="grid gap-6 md:grid-cols-2">
@@ -126,7 +126,7 @@ export default function Home() {
       </section>
 
       {/* Contact */}
-      <section id="contact" className="bg-gray-50 dark:bg-gray-900 py-16">
+      <section id="contact" className="py-16" style={{ backgroundColor: 'var(--background)' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl font-semibold mb-6">联系我们</h2>
           <ContactForm />

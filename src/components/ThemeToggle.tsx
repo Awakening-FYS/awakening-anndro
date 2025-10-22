@@ -3,15 +3,20 @@
 import { useEffect, useState } from 'react'
 
 export default function ThemeToggle() {
-  const [mode, setMode] = useState<'dark'|'light'|'system'>(() => {
+  // Do NOT read localStorage when initializing state — that runs during server render and
+  // will cause hydration mismatches. Start with a deterministic default and hydrate
+  // the real preference on the client in an effect.
+  const [mode, setMode] = useState<'dark'|'light'|'system'>('system')
+
+  // On mount, read saved preference (client-only) and update state.
+  useEffect(() => {
     try {
       const v = localStorage.getItem('site-theme') as 'dark'|'light'|'system'|null
-      return v || 'system'
-    } catch {
-      return 'system'
-    }
-  })
+      if (v) setMode(v)
+    } catch {}
+  }, [])
 
+  // Apply the selected mode whenever it changes (runs only on client).
   useEffect(() => {
     const apply = (m: string) => {
       if (m === 'dark') document.documentElement.classList.add('dark')

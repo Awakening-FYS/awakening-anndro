@@ -69,7 +69,7 @@ export default function Navbar() {
   <nav
       ref={navRef}
       style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999 }}
-  className="backdrop-blur-sm bg-blue-200 dark:bg-gray-900/80 shadow-md dark:shadow-lg px-4 py-3 border-b border-transparent relative"
+  className="backdrop-blur-sm bg-background/80 dark:bg-card/90 shadow-md dark:shadow-lg px-4 py-3 border-b border-transparent relative"
     >
       <div className="max-w-5xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -88,11 +88,11 @@ export default function Navbar() {
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-1 flex-nowrap whitespace-nowrap">
-          <Link href="/" className="font-bold text-lg px-4 py-1 rounded hover:bg-blue-100 text-gray-800 dark:text-gray-200 transition no-underline">首页</Link>
-          <Link href="/about" className="font-bold text-lg px-4 py-1 rounded hover:bg-blue-100 text-gray-800 dark:text-gray-200 transition no-underline">关于</Link>
-          <Link href="/practice" className="font-bold text-lg px-4 py-1 rounded hover:bg-blue-100 text-gray-800 dark:text-gray-200 transition no-underline">练习</Link>
-          <Link href="/blog" className="font-bold text-lg px-4 py-1 rounded hover:bg-blue-100 text-gray-800 dark:text-gray-200 transition no-underline">文章</Link>
-          <Link href="/contact" className="font-bold text-lg px-4 py-1 rounded hover:bg-blue-100 text-gray-800 dark:text-gray-200 transition no-underline">联系</Link>
+          <Link href="/" className="font-bold text-lg px-4 py-1 rounded hover:bg-background/10 text-foreground transition no-underline">首页</Link>
+          <Link href="/about" className="font-bold text-lg px-4 py-1 rounded hover:bg-background/10 text-foreground transition no-underline">关于</Link>
+          <Link href="/practice" className="font-bold text-lg px-4 py-1 rounded hover:bg-background/10 text-foreground transition no-underline">练习</Link>
+          <Link href="/blog" className="font-bold text-lg px-4 py-1 rounded hover:bg-background/10 text-foreground transition no-underline">文章</Link>
+          <Link href="/contact" className="font-bold text-lg px-4 py-1 rounded hover:bg-background/10 text-foreground transition no-underline">联系</Link>
 
           {session?.user ? (
             <div className="ml-6 flex items-center space-x-2">
@@ -132,7 +132,7 @@ export default function Navbar() {
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label="Toggle menu"
-            className="p-2 rounded bg-blue-100 dark:bg-gray-800 inline-flex"
+            className="p-2 rounded bg-background/10 dark:bg-card inline-flex"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-800 dark:text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={open ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
@@ -148,16 +148,16 @@ export default function Navbar() {
   <input id="nav-toggle" ref={toggleInputRef} className="peer hidden" type="checkbox" aria-hidden />
 
       <div id="mobile-menu" className={
-        "md:hidden absolute right-4 top-full mt-2 min-w-[10rem] bg-background text-foreground dark:bg-gray-800 rounded shadow-lg z-50 " +
+  "md:hidden absolute right-4 top-full mt-2 min-w-[10rem] bg-background text-foreground dark:bg-card rounded shadow-lg z-50 " +
         (open ? 'flex' : 'hidden') +
         ' peer-checked:flex'
       }>
           <div className="flex flex-col p-2">
-            <Link href="/" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-blue-100">首页</Link>
-            <Link href="/about" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-blue-100">关于</Link>
-            <Link href="/practice" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-blue-100">练习</Link>
-            <Link href="/blog" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-blue-100">文章</Link>
-            <Link href="/contact" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-blue-100">联系</Link>
+            <Link href="/" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-background/10">首页</Link>
+            <Link href="/about" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-background/10">关于</Link>
+            <Link href="/practice" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-background/10">练习</Link>
+            <Link href="/blog" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-background/10">文章</Link>
+            <Link href="/contact" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-background/10">联系</Link>
 
             {session?.user ? (
               <div className="pt-2 border-t">
