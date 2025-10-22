@@ -108,7 +108,7 @@ export default function CommentSection() {
                 const listData = await listRes.json()
                 if (Array.isArray(listData.comments)) setComments(listData.comments)
               }
-            } catch (e) {
+            } catch {
               // ignore refresh errors
             }
         }

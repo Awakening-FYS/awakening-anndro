@@ -11,13 +11,6 @@ import Hero from "@/components/Hero"
 export const dynamic = "force-static" // 或 "force-dynamic"
 
 export default function Home() {
-  type Post = {
-    slug: string;
-    title: string;
-    date: string;
-    // 可根据实际数据结构补充字段
-  };
-  
   
   return (
    <div className="min-h-screen flex flex-col bg-gradient-to-b from-green-200 via-blue-200 to-yellow-100">

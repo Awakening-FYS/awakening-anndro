@@ -28,7 +28,7 @@ async function githubGraphQL(query: string, variables?: any) {
   let json: any = null
   try {
     json = await res.json()
-  } catch (e) {
+  } catch {
     return { ok: res.ok, status: res.status, json: null, errors: [{ message: 'invalid-json' }] }
   }
 
