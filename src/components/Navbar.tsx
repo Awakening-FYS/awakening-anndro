@@ -4,6 +4,7 @@ import Image from "next/image"
 import { useState, useEffect, useRef } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { usePathname, useRouter } from "next/navigation"
+import ThemeToggle from "@/components/ThemeToggle"
 
 export default function Navbar() {
   const { data: session } = useSession()
@@ -82,7 +83,7 @@ export default function Navbar() {
               style={{ height: '100%', width: '100%', objectFit: 'cover' }}
             />
           </div>
-          <Link href="/" className="font-bold text-3xl no-underline text-black-1200 dark:text-yellow-300">意识觉醒</Link>
+          <Link href="/" className="font-bold text-3xl no-underline" >意识觉醒</Link>
         </div>
 
         {/* Desktop links */}
@@ -95,6 +96,7 @@ export default function Navbar() {
 
           {session?.user ? (
             <div className="ml-6 flex items-center space-x-2">
+              <ThemeToggle />
               <span className="text-sm text-gray-800 dark:text-gray-200">欢迎，{session.user.name ?? session.user.email}</span>
               <button
                 onClick={async () => {
@@ -108,6 +110,7 @@ export default function Navbar() {
             </div>
           ) : (
             <div className="ml-6 flex items-center space-x-2">
+              <ThemeToggle />
               <Link href={`/login?callbackUrl=${encodeURIComponent(pathname || '/')}`} className="font-bold text-lg px-6 py-1 rounded bg-blue-700 hover:bg-blue-800 text-white transition no-underline">登录</Link>
               <Link href="/register" className="font-bold text-lg px-6 py-1 rounded bg-green-700 hover:bg-green-800 text-white transition no-underline">注册</Link>
             </div>
@@ -145,7 +148,7 @@ export default function Navbar() {
   <input id="nav-toggle" ref={toggleInputRef} className="peer hidden" type="checkbox" aria-hidden />
 
       <div id="mobile-menu" className={
-        "md:hidden absolute right-4 top-full mt-2 min-w-[10rem] bg-white dark:bg-gray-800 rounded shadow-lg z-50 " +
+        "md:hidden absolute right-4 top-full mt-2 min-w-[10rem] bg-background text-foreground dark:bg-gray-800 rounded shadow-lg z-50 " +
         (open ? 'flex' : 'hidden') +
         ' peer-checked:flex'
       }>

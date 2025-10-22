@@ -57,3 +57,30 @@ Invoke-RestMethod -Uri 'http://localhost:3000/api/github-test' -Method Get | Con
 
 If you accidentally committed a token, revoke it immediately on GitHub and replace it with a new one. Do not commit secrets to source control.
 
+
+## Developer notes
+
+Quick items useful when developing locally:
+
+- Theme handling
+	- This project uses class-based dark mode. The current implementation reads a `site-theme` key from `localStorage` and adds/removes the `dark` class on the `<html>` element early in `src/app/head.tsx`.
+	- Use the theme toggle in the Navbar (Dark / Light / System) to persist a preference. To force dark from the console:
+
+```js
+localStorage.setItem('site-theme','dark'); location.reload();
+```
+
+- Favicons
+	- Canonical favicons live in `public/` as `favicon.ico`, `favicon-dark.ico`, and `favicon-light.ico`.
+	- If you add or replace icons, clear browser cache or add a query string `/?v=2` while testing.
+
+- Image background removal and ICO conversion
+	- ImageMagick (magick) is recommended for quick PNG/JPG -> ICO conversion. On Windows you can install via Chocolatey or Scoop, or download the official installer:
+		- Chocolatey: `choco install imagemagick` (run in an elevated PowerShell)
+		- Scoop: `scoop install imagemagick`
+		- Verify with `magick -version`
+	- Alternative (Node): use `sharp` to create a PNG and `png-to-ico` to make an ICO. See `DEVELOPER_NOTES.md` for examples.
+
+- Removing temporary files
+	- Some image previews and dev artifacts may be under `public/images/` (look for `dazuo_trans*` or `*preview*`). You can run `scripts/cleanup.ps1` to move non-production files into `scripts/archive/` for safekeeping.
+

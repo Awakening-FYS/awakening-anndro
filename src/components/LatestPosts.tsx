@@ -35,7 +35,7 @@ export default function LatestPosts() {
         <div className="bg-transparent">
           <div className="flex flex-col gap-4">
             <div className="md:flex-1">
-              <ul className="space-y-2">
+              <ul className="list-none pl-0 space-y-2">
                 {recentPosts.map((post) => (
                   <li key={post.slug}>
                     <Link
@@ -49,7 +49,7 @@ export default function LatestPosts() {
                 ))}
               </ul>
 
-              <div className="mt-6 py-2 text-right md:text-right">
+              <div className="mt-0 py-3 text-right md:text-right">
                 <Link href="/blog" className="text-blue-600 hover:underline">
                   查看所有文章 →
                 </Link>

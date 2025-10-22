@@ -8,8 +8,8 @@ export default function Hero() {
     className="flex-1 flex items-center justify-center text-center px-4 sm:px-6 py-20 bg-cover bg-center relative"
     style={{ backgroundImage: `url('/images/dazuo1.png')` }}
   >
-    {/* overlay sits behind content: z-0 so it doesn't cover text */}
-    <div className="absolute inset-0 bg-white/30 dark:bg-black/50 z-0" aria-hidden />
+  {/* overlay sits behind content: z-0 so it doesn't cover text and does not intercept pointer events */}
+  <div className="absolute inset-0 bg-white/30 dark:bg-black/50 z-0 pointer-events-none" aria-hidden />
     <motion.div
       className="relative z-10"
       initial={{ opacity: 0, y: 30 }}
