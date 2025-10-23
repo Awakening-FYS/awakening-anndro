@@ -12,7 +12,9 @@ export default function Navbar() {
 
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  
   const navRef = useRef<HTMLElement | null>(null)
+  
   const toggleInputRef = useRef<HTMLInputElement | null>(null)
   const closeMenu = () => {
     setOpen(false)
@@ -27,10 +29,47 @@ export default function Navbar() {
       const h = Math.ceil(el.getBoundingClientRect().height)
       document.documentElement.style.setProperty('--navbar-height', `${h}px`)
     }
-    setHeight()
-    window.addEventListener('resize', setHeight)
-    return () => window.removeEventListener('resize', setHeight)
+
+    // schedule a robust recalculation: initial, next animation frames and after fonts load
+    const schedule = () => {
+      try { setHeight() } catch {}
+      // double rAF helps after layout/paint
+      requestAnimationFrame(() => requestAnimationFrame(() => { try { setHeight() } catch {} }))
+      // when fonts finish loading, heights may change (guard for document.fonts presence)
+      try {
+        const fonts = (document as Document & { fonts?: FontFaceSet }).fonts
+        fonts?.ready?.then(() => { try { setHeight() } catch {} })
+      } catch {}
+    }
+
+    schedule()
+
+    // Recalculate on window resize
+    window.addEventListener('resize', schedule)
+    // Recalculate when the html element's class changes (dark mode toggles may be applied on load)
+    const mo = new MutationObserver((mutations: MutationRecord[]) => {
+      for (const m of mutations) {
+        if (m.attributeName === 'class') {
+          schedule()
+          break
+        }
+      }
+    })
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+
+    // Also recalc on load in case some resources changed height after initial script run
+    window.addEventListener('load', schedule)
+
+    return () => {
+      window.removeEventListener('resize', schedule)
+      window.removeEventListener('load', schedule)
+      try { mo.disconnect() } catch {}
+    }
   }, [])
+
+  
+
+  
 
   // Close menu when clicking outside the navbar
   useEffect(() => {

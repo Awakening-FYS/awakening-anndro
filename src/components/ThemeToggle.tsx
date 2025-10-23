@@ -7,7 +7,6 @@ export default function ThemeToggle({ vertical }: { vertical?: boolean }) {
   // will cause hydration mismatches. Start with a deterministic default and hydrate
   // the real preference on the client in an effect.
   const [mode, setMode] = useState<'dark'|'light'|'system'>('system')
-  const [isDark, setIsDark] = useState<boolean>(false)
 
   // On mount, read saved preference (client-only) and update state.
   useEffect(() => {
@@ -26,8 +25,6 @@ export default function ThemeToggle({ vertical }: { vertical?: boolean }) {
         if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark')
         else document.documentElement.classList.remove('dark')
       }
-      // update derived state so UI can reflect the actually-applied theme
-      setIsDark(document.documentElement.classList.contains('dark'))
     }
 
     apply(mode)
@@ -39,13 +36,13 @@ export default function ThemeToggle({ vertical }: { vertical?: boolean }) {
     if (mode === 'system' && typeof window !== 'undefined' && window.matchMedia) {
       mq = window.matchMedia('(prefers-color-scheme: dark)')
       if (mq.addEventListener) mq.addEventListener('change', handler)
-      else mq.addListener(handler as (this: MediaQueryList, ev: MediaQueryListEvent) => any)
+      else mq.addListener(handler as (this: MediaQueryList, ev: MediaQueryListEvent) => void)
     }
 
     return () => {
       if (mq) {
         if (mq.removeEventListener) mq.removeEventListener('change', handler)
-        else mq.removeListener(handler as (this: MediaQueryList, ev: MediaQueryListEvent) => any)
+        else mq.removeListener(handler as (this: MediaQueryList, ev: MediaQueryListEvent) => void)
       }
     }
   }, [mode])

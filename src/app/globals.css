@@ -1,14 +1,11 @@
-@import "tailwindcss/theme";      /* ✅ 引入自定义主题层 */
-@import "tailwindcss/utilities";  /* ✅ 引入 Tailwind 工具层（保留兼容） */
-@import "tw-animate-css";         /* ✅ 动画库可留 */
+@import "tailwindcss/theme";      /* Tailwind imports */
+@import "tailwindcss/utilities";  /* Tailwind imports */
+@import "tw-animate-css";         /* optional animations */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @custom-variant dark (&:is(.dark *));
-
-
-
 
 @theme inline {
   --color-background: var(--background);
@@ -52,9 +49,8 @@
 
 :root {
   --radius: 0.625rem;
-  /* Display font for the site title (use clear Chinese sans for legibility) */
+  /* Fonts */
   --font-display: 'Noto Sans SC', 'Noto Serif SC', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  /* Artistic display font token used specifically for the navbar title */
   --font-title: 'ZCOOL XiaoWei', 'ZCOOL QingKe HuangYou', var(--font-display);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -95,24 +91,16 @@
   --btn-shadow: 0 6px 18px rgba(4, 20, 18, 0.12);
   --btn-hover-shadow: 0 10px 24px rgba(4,20,18,0.14);
   /* Navbar theming (light mode) — warmer and more visible than plain white */
-  --navbar-bg: rgba(255,243,224,0.95); /* warm cream (more visible) */
-  --navbar-border: rgba(14,85,80,0.08);
-  /* Site title (意识觉醒) tokens — light mode: darker teal gradient for stronger contrast with light backgrounds */
-  --title-gradient-light: linear-gradient(90deg, #06332f 0%, #0b4b45 45%, #123531 100%);
-  --title-fallback-light: #042825; /* darker fallback for accessibility */
-  --title-solid-light: #062b27; /* solid fallback when gradient is disabled */
-  /* Individual stops for inline SVG gradients (light) */
-  --title-stop-1: #06332f;
-  --title-stop-2: #0b4b45;
-  --title-stop-3: #123531;
+  --navbar-bg: rgba(190,235,216,0.95); /* pale mint/green */
+  --navbar-border: rgba(6,120,100,0.08)
+  /* Site title (意识觉醒) tokens — light mode: Strong Teal (Scheme A) */
+  --title-solid-light: #014b42; /* solid color for the site title in light mode */
   /* Wordmark font size (set to match dark theme for consistent sizing) */
-  --wordmark-font-size: 64px;
-  /* Wordmark background (light mode) — subtle warm pill behind the text */
-  --wordmark-bg: rgba(255, 250, 240, 0.85);
-  --wordmark-border: rgba(14,85,80,0.06);
+    --wordmark-font-size: 52px;
+  /* Wordmark background tokens removed (not used) */
 }
 
-/* Register Roboto woff2 as a fallback local font (uses the provided URL) */
+/* Roboto fallback (woff2) */
 @font-face {
   font-family: 'RobotoLocal';
   src: url('https://fonts.gstatic.com/s/roboto/v18/KFOmCnqEu92Fr1Mu4mxKKTU1Kg.woff2') format('woff2');
@@ -125,11 +113,7 @@
   --font-roboto: 'RobotoLocal', 'Roboto', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* Self-hosted display/title font declarations
-   Place font files in public/fonts/ with the following names:
-     - /public/fonts/ZCOOLXiaoWei.woff2
-     - /public/fonts/NotoSansSC-Regular.woff2
-   The project will preload these files via head.tsx. */
+/* Self-hosted title fonts (in /public/fonts) */
 @font-face {
   /* Register ZCOOL XiaoWei under its upstream family name */
   font-family: 'ZCOOL XiaoWei';
@@ -165,7 +149,7 @@
 
 
 .dark {
-  /* use a solid dark gray for reliable dark-mode page background */
+  /* Dark mode color tokens */
   --background: rgb(48 48 48);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -197,30 +181,21 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-  /* Button theme variables (dark mode overrides) */
+  /* Button variables (dark mode) */
   --btn-bg-image: linear-gradient(135deg, #044E54 0%, #0EA5A4 100%);
   --btn-bg-color: #044E54;
   --btn-color: #f8fafc;
   --btn-border-color: rgba(6,40,40,0.18);
   --btn-shadow: 0 8px 22px rgba(6,40,40,0.14);
   --btn-hover-shadow: 0 10px 24px rgba(6,40,40,0.18);
-  /* Navbar theming (dark mode) */
+  /* Navbar (dark mode) */
   --navbar-bg: rgba(4,78,84,0.6);
   --navbar-border: rgba(0,0,0,0.4);
-  /* Site title tokens for dark mode */
-  /* More vivid aqua/cyan stops so the wordmark stands out against dark backgrounds */
-  --title-gradient-dark: linear-gradient(90deg, #8ffdf8 0%, #2be8d8 50%, #05c4b4 100%);
-  --title-fallback-dark: #bffef7;
+  /* Site title (dark mode) */
   --title-solid-dark: #9efcf0; /* high-contrast solid color for dark mode */
-  /* Individual stops for inline SVG gradients (dark) - brighter for contrast */
-  --title-stop-1: #8ffdf8;
-  --title-stop-2: #2be8d8;
-  --title-stop-3: #05c4b4;
   /* Increase wordmark on dark so it reads clearly against deep backgrounds */
   --wordmark-font-size: 52px;
-  /* Wordmark background (dark mode) — semi-transparent deep teal for contrast */
-  --wordmark-bg: rgba(4,78,84,0.28);
-  --wordmark-border: rgba(0,0,0,0.25);
+  /* wordmark background tokens removed (not used) */
 }
 .dark {
   --page-gradient-start: #071B22; /* deep teal  — 极深的蓝绿色（近黑） */
@@ -228,101 +203,34 @@
   --page-gradient-end:   #21343B; /* muted slate — 带点灰度的石板色 */
 }
 
-@layer utilities {
-  .bg-page-gradient {
-    background-image: linear-gradient(to bottom, var(--page-gradient-start), var(--page-gradient-via), var(--page-gradient-end));
-  }
-}
+@layer utilities { .bg-page-gradient { background-image: linear-gradient(to bottom, var(--page-gradient-start), var(--page-gradient-via), var(--page-gradient-end)); } }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-    font-family: var(--font-roboto);
-  }
+  * { @apply border-border outline-ring/50; }
+  body { @apply bg-background text-foreground; font-family: var(--font-roboto); }
 }
-.prose img {
-  border-radius: 0.5rem;
-}
+.prose img { border-radius: 0.5rem; }
+.prose pre { background-color: oklch(0.97 0 0); padding: 1rem; border-radius: 0.5rem; }
+.prose table { @apply border border-gray-300 w-full; width:100%; table-layout: fixed; }
+.prose th { @apply bg-card/90 border border-red-300 px-4 py-2 font-semibold; }
+.prose td { @apply border border-red-300 px-4 py-2; }
+.prose th:nth-child(1), .prose td:nth-child(1){ width:20%; }
+.prose th:nth-child(2), .prose td:nth-child(2){ width:40%; }
+.prose th:nth-child(3), .prose td:nth-child(3){ width:40%; }
 
-.prose pre {
-  background-color: oklch(0.97 0 0);
-  padding: 1rem;
-  border-radius: 0.5rem;
-}
+/* Prevent horizontal overflow and ensure the viewport background follows the theme */
+html, body { overflow-x: hidden; margin: 0; background-color: var(--background); }
 
-.prose table {
-  @apply border border-gray-300 w-full;
-}
+/* Force viewport background in dark mode */
+.dark html, .dark body, html.dark, body.dark { background-color: var(--background) !important; min-height: 100vh; }
 
-.prose th {
-  @apply bg-card/90 border border-red-300 px-4 py-2  font-semibold;
-}
-
-.prose td {
-  @apply border border-red-300 px-4 py-2;
-}
-
-
-.prose table {
-  width: 100%;
-  table-layout: fixed; /* 让列宽生效 */
-}
-
-.prose th:nth-child(1),
-.prose td:nth-child(1) {
-  width: 20%;
-}
-
-.prose th:nth-child(2),
-.prose td:nth-child(2) {
-  width: 40%;
-}
-
-.prose th:nth-child(3),
-.prose td:nth-child(3) {
-  width: 40%;
-}
-
-/* Prevent horizontal overflow which can reveal white gutters on mobile/scroll */
-html, body {
-  overflow-x: hidden;
-  margin: 0;
-  /* ensure the viewport background follows the theme variable */
-  background-color: var(--background);
-}
-
-/* High-specificity dark-mode override to ensure gutters and viewport show dark background */
-.dark html,
-.dark body,
-html.dark,
-body.dark {
-  background-color: var(--background) !important;
-  min-height: 100vh;
-}
-
-/* Theme-aware button used across the site (consumes variables declared in :root and .dark) */
-.btn-theme {
-  background-image: var(--btn-bg-image);
-  background-color: var(--btn-bg-color);
-  color: var(--btn-color);
-  border: 1px solid var(--btn-border-color);
-  box-shadow: var(--btn-shadow);
-  transition: transform 120ms ease, box-shadow 120ms ease;
-}
+/* Theme-aware button */
+.btn-theme { background-image: var(--btn-bg-image); background-color: var(--btn-bg-color); color: var(--btn-color); border: 1px solid var(--btn-border-color); box-shadow: var(--btn-shadow); transition: transform 120ms ease, box-shadow 120ms ease; }
 .btn-theme:hover { transform: translateY(-1px); box-shadow: var(--btn-hover-shadow); }
-.btn-theme:focus {
-  outline: 2px solid color-mix(in srgb, var(--ring) 40%, transparent);
-  outline-offset: 2px;
-}
+.btn-theme:focus { outline: 2px solid color-mix(in srgb, var(--ring) 40%, transparent); outline-offset: 2px; }
 
-/* Artistic site title used for the main brand text in the navbar. Uses a gradient with an
-   accessible fallback color when background-clip:text is not available. Dark mode applies
-   a subtle glow to help the title stand out on deep backgrounds. */
-.site-title {
-  /* C-style: bookish/书法感 layout while using the ZCOOL QingKe display font */
+.site-title { /* Site title (wordmark): uses solid colors; dark mode glow */
+  /* Bookish display font (ZCOOL) */
   font-family: 'ZCOOL XiaoWei', 'ZCOOL QingKe HuangYou', 'Noto Sans SC', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
   font-weight: 400;
   font-size: var(--wordmark-font-size);
@@ -331,14 +239,8 @@ body.dark {
   line-height: 1;
   display: inline-block;
   text-decoration: none;
-  /* fallback color (used by browsers that do not support background-clip:text) */
-  color: var(--title-fallback-light);
-  /* gradient fill */
-  background-image: var(--title-gradient-light);
-  background-clip: text;
-  -webkit-background-clip: text;
-  /* make the text transparent so the gradient shows through on WebKit */
-  -webkit-text-fill-color: transparent;
+  /* Use a fixed, accessible color for the title in light mode */
+  color: var(--title-solid-light);
   transition: text-shadow 180ms ease, transform 180ms ease;
   /* layered crisp shadows to emulate ink density and a slight embossed feel */
   text-shadow:
@@ -350,15 +252,12 @@ body.dark {
 
 .dark .site-title {
   /* Use a solid, high-contrast color in dark mode for crisp rendering. Disable gradient fill. */
-  background-image: none !important;
-  -webkit-background-clip: initial !important;
-  background-clip: initial !important;
   color: var(--title-solid-dark);
   -webkit-text-fill-color: var(--title-solid-dark);
   text-shadow: 0 2px 8px rgba(6,160,150,0.12);
 }
 
-/* Wordmark styling: keeps SVG at predictable height and allows color override */
+/* Wordmark SVG/text layout (no pill background) */
 .site-wordmark svg {
   /* Use a slightly smaller max-height so the SVG doesn't dominate horizontal space */
   max-height: 48px;
@@ -371,7 +270,6 @@ body.dark {
 }
 .site-wordmark text { font-weight: 700; dominant-baseline: middle; }
 
-/* Compact pill background for the wordmark to reduce layout footprint */
 .site-wordmark {
   display: inline-flex;
   align-items: center;
@@ -385,19 +283,21 @@ body.dark {
   box-shadow: none !important;
 }
 
-/* Ensure any child elements don't render a pill (extra safety) */
+/* Ensure children have no background/border */
 .site-wordmark > * {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
 }
 
-/* Tighten the navbar vertical padding so the computed --navbar-height is smaller
-   and the page content sits closer under the fixed navbar. This overrides the
-   Tailwind `py-3` used in the Navbar component. */
+/* Tighten navbar vertical padding (overrides Tailwind py-3) */
 nav.backdrop-blur-sm {
-  padding-top: 0.375rem !important; /* ~6px */
-  padding-bottom: 0.375rem !important; /* ~6px */
+  padding-top: 0.75rem !important; /* Tailwind py-3 ≈ 12px */
+  padding-bottom: 0.75rem !important; /* Tailwind py-3 ≈ 12px */
 }
 
-
+/* Keep main content flush beneath the fixed navbar (uses --navbar-height) */
+main.max-w-5xl.mx-auto {
+  padding-top: var(--navbar-height, 56px) !important;
+  margin-top: 0 !important;
+}
