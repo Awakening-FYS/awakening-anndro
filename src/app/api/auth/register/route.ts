@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs"
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, password } = await req.json()
+    const { name, email, password, handy } = await req.json()
     if (!name || !email || !password) {
       return NextResponse.json({ error: "昵称、邮箱和密码不能为空" }, { status: 400 })
     }
@@ -22,9 +22,13 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
+  const insertPayload: { name: string; email: string; password: string; handy?: string } = { name, email, password: hashedPassword }
+  // include handy if provided (optional column)
+  if (handy) insertPayload.handy = handy
+
     const { data, error } = await supabase
       .from("SignIn")
-      .insert({ name, email, password: hashedPassword })
+      .insert(insertPayload)
       .select()
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })

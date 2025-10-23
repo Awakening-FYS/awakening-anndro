@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { usePathname, useRouter } from "next/navigation"
 import ThemeToggle from "@/components/ThemeToggle"
+import AuthModal from "@/components/AuthModal"
 
 export default function Navbar() {
   const { data: session } = useSession()
@@ -12,6 +13,9 @@ export default function Navbar() {
 
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const [authOpen, setAuthOpen] = useState(false)
+  const [authOpenView, setAuthOpenView] = useState<'phone'|'email'|'register' | undefined>(undefined)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
   
   const navRef = useRef<HTMLElement | null>(null)
   
@@ -105,7 +109,8 @@ export default function Navbar() {
   }, [pathname])
 
   return (
-  <nav
+    <>
+      <nav
       ref={navRef}
     style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999, backgroundColor: 'var(--navbar-bg)', borderBottomColor: 'var(--navbar-border)' }}
   className="backdrop-blur-sm shadow-md dark:shadow-lg px-4 py-3 border-b relative"
@@ -137,25 +142,32 @@ export default function Navbar() {
           <Link href="/contact" className="font-bold text-lg px-4 py-1 rounded hover:bg-background/10 text-foreground transition no-underline">联系</Link>
           <div className="ml-auto flex items-center gap-2">
             {session?.user ? (
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-800 dark:text-gray-200">欢迎，{session.user.name ?? session.user.email}</span>
+              // Show username plain; clicking toggles a small logout menu
+              <div className="relative">
                 <button
-                  onClick={async () => {
-                    await signOut({ callbackUrl: pathname || '/', redirect: false })
-                    try { router.refresh() } catch { window.location.href = pathname || '/' }
-                  }}
-                  className="font-bold text-sm px-2 py-1 rounded bg-red-600 hover:bg-red-700 text-white transition"
+                  onClick={(e) => { e.preventDefault(); setUserMenuOpen((v) => !v) }}
+                  aria-expanded={userMenuOpen}
+                  className="font-bold text-lg text-foreground no-underline bg-transparent px-0 py-0"
                 >
-                  退出
+                  {session.user.name ?? session.user.email}
                 </button>
+                {userMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-40 bg-background dark:bg-card rounded shadow-md z-50">
+                    <button
+                      onClick={async () => {
+                        setUserMenuOpen(false)
+                        await signOut({ callbackUrl: pathname || '/', redirect: false })
+                        try { router.refresh() } catch { window.location.href = pathname || '/' }
+                      }}
+                      className="w-full text-left px-4 py-2 hover:bg-background/10"
+                    >退出</button>
+                  </div>
+                )}
               </div>
             ) : (
-              <div className="flex items-center space-x-2">
-                <Link href={`/login?callbackUrl=${encodeURIComponent(pathname || '/')}`} className="font-bold text-lg px-6 py-1 rounded bg-blue-700 hover:bg-blue-800 text-white transition no-underline">登录</Link>
-                <Link href="/register" className="font-bold text-lg px-6 py-1 rounded bg-green-700 hover:bg-green-800 text-white transition no-underline">注册</Link>
-              </div>
+              // Plain text login link (no pill/button styling)
+              <a href="#" onClick={(e) => { e.preventDefault(); setAuthOpen(true); setAuthOpenView('email') }} className="font-bold text-lg text-foreground no-underline">登录</a>
             )}
-
             <div className="ml-auto flex-shrink-0">
               <ThemeToggle vertical />
             </div>
@@ -163,11 +175,11 @@ export default function Navbar() {
         </div>
 
         {/* Mobile hamburger with CSS fallback */}
-        <div className="md:hidden">
+            <div className="md:hidden">
           {/* Button toggles React state and keeps the hidden checkbox in sync for the CSS fallback. */}
           <div className="md:hidden flex items-center gap-2">
             {/* Keep the ThemeToggle visible on small screens next to the hamburger */}
-            <div className="flex-shrink-0">
+                <div className="flex-shrink-0">
               <ThemeToggle />
             </div>
             <button
@@ -198,7 +210,7 @@ export default function Navbar() {
           the `peer-checked:` variant - the input must be a sibling that comes before the target. */}
   <input id="nav-toggle" ref={toggleInputRef} className="peer hidden" type="checkbox" aria-hidden />
 
-      <div id="mobile-menu" className={
+            <div id="mobile-menu" className={
   "md:hidden absolute right-4 top-full mt-2 min-w-[10rem] bg-background text-foreground dark:bg-card rounded shadow-lg z-50 " +
         (open ? 'flex' : 'hidden') +
         ' peer-checked:flex'
@@ -210,19 +222,20 @@ export default function Navbar() {
             <Link href="/blog" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-background/10">文章</Link>
             <Link href="/contact" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-background/10">联系</Link>
 
-            {session?.user ? (
-              <div className="pt-2 border-t">
-                <div className="text-sm mb-2 px-4 py-2 text-center">欢迎，{session.user.name ?? session.user.email}</div>
-                <button onClick={async () => { closeMenu(); await signOut({ callbackUrl: pathname || '/', redirect: false }); try { router.refresh() } catch { window.location.href = pathname || '/' } }} className="w-full text-center px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white">退出</button>
-              </div>
-            ) : (
-                <div className="pt-2 border-t flex flex-col space-y-2">
-                <Link href={`/login?callbackUrl=${encodeURIComponent(pathname || '/')}`} onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded bg-blue-700 text-white">登录</Link>
-                <Link href="/register" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded bg-green-700 text-white">注册</Link>
-              </div>
-            )}
+            <div className="pt-2 border-t">
+              {session?.user ? (
+                <>
+                  <div className="text-sm mb-2 px-4 py-2 text-center">{session.user.name ?? session.user.email}</div>
+                  <button onClick={async () => { closeMenu(); await signOut({ callbackUrl: pathname || '/', redirect: false }); try { router.refresh() } catch { window.location.href = pathname || '/' } }} className="w-full text-center px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white">退出</button>
+                </>
+              ) : (
+                <a href="#" onClick={(e) => { e.preventDefault(); closeMenu(); setAuthOpen(true); setAuthOpenView('email') }} className="w-full text-center px-4 py-2">登录</a>
+              )}
+            </div>
           </div>
         </div>
-    </nav>
+      </nav>
+  <AuthModal open={authOpen} onClose={() => { setAuthOpen(false); setAuthOpenView(undefined) }} openView={authOpenView} />
+    </>
   )
 }
