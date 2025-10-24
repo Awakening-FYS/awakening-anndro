@@ -107,7 +107,7 @@ export default function Home() {
           method="POST"
           target="_blank"
           noValidate
-          className="space-y-4"
+          className="space-y-4 mx-auto w-full max-w-[min(520px,100%)] box-border px-4"
         >
           <Input
             type="email"

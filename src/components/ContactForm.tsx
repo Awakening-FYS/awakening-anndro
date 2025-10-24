@@ -40,18 +40,30 @@ export default function ContactForm() {
   }
 
   return (
-    <form className="space-y-4" onSubmit={handleContactSubmit}>
+    <form
+      className="space-y-4 mx-auto w-full max-w-[min(720px,100%)] box-border px-4"
+      onSubmit={handleContactSubmit}
+    >
       <Input type="text" name="name" placeholder="你的名字" required />
       <Input type="email" name="email" placeholder="你的邮箱" required />
       <Textarea name="message" placeholder="你的信息..." rows={4} required />
-      <ReCAPTCHA
-        sitekey="6LeFXNwrAAAAALezWu6yS8Zhmpt-e8U0lxnDsIln"
-        ref={recaptchaRef}
-        onChange={setCaptcha}
-      />
-      <Button type="submit" className="rounded-full text-lg px-16 py-4 font-bold">
-        发送
-      </Button>
+      <div className="flex justify-center">
+        <div className="-mx-0">{
+          /* ReCAPTCHA: use compact size to avoid horizontal overflow on narrow screens */
+        }
+          <ReCAPTCHA
+            sitekey="6LeFXNwrAAAAALezWu6yS8Zhmpt-e8U0lxnDsIln"
+            ref={recaptchaRef}
+            onChange={setCaptcha}
+            
+          />
+        </div>
+      </div>
+      <div className="flex justify-center">
+        <Button type="submit" className="rounded-full text-base px-4 py-3 w-full md:w-auto font-bold">
+          发送
+        </Button>
+      </div>
     </form>
   )
 }

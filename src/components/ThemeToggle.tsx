@@ -65,15 +65,31 @@ export default function ThemeToggle({ vertical }: { vertical?: boolean }) {
   const containerClass = vertical ? 'flex flex-col items-end gap-1' : 'flex items-center gap-2'
   const btnPadding = vertical ? 'px-2 py-0.5 text-sm' : 'px-2 py-1'
 
+  
+
+  // The visible label should reflect the actually applied site theme (appliedDark)
+  // and should NOT change when the OS/system theme changes.
+  const visibleDark = appliedDark
+
+  const handleClick = () => {
+    // If currently following system, user click should set an explicit choice
+    // based on the currently applied theme (toggle it). Otherwise toggle explicit mode.
+    if (mode === 'follow') {
+      setMode(appliedDark ? 'light' : 'dark')
+    } else {
+      setMode(mode === 'dark' ? 'light' : 'dark')
+    }
+  }
+
   return (
     <div className={containerClass}>
         <button
-          onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
+          onClick={handleClick}
           className={`${btnPadding} rounded border inline-flex items-center shadow-sm btn-theme`}
-          aria-pressed={mode === 'dark'}
-          title={mode === 'dark' ? '切换到浅色' : '切换到深色'}
+          aria-pressed={appliedDark}
+          title={appliedDark ? '切换到浅色' : '切换到深色'}
         >
-          {appliedDark ? '浅' : '深'}
+          {visibleDark ? '深' : '浅'}
         </button>
         {/* Removed explicit "system" control. The component uses system preference on
             first load and will listen for system changes as long as the user has not
