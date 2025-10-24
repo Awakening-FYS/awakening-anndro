@@ -52,7 +52,7 @@
   /* Fonts */
   --font-display: 'Noto Sans SC', 'Noto Serif SC', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-title: 'ZCOOL XiaoWei', 'ZCOOL QingKe HuangYou', var(--font-display);
-  --background: oklch(1 0 0);
+  --background: oklch(70.493% 0.00118 200.877 / 0.902);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -96,7 +96,7 @@
   /* Site title (意识觉醒) tokens — light mode: Strong Teal (Scheme A) */
   --title-solid-light: #014b42; /* solid color for the site title in light mode */
   /* Wordmark font size (set to match dark theme for consistent sizing) */
-    --wordmark-font-size: 52px;
+    --wordmark-font-size: 40px;
   /* Wordmark background tokens removed (not used) */
 }
 
@@ -194,7 +194,7 @@
   /* Site title (dark mode) */
   --title-solid-dark: #9efcf0; /* high-contrast solid color for dark mode */
   /* Increase wordmark on dark so it reads clearly against deep backgrounds */
-  --wordmark-font-size: 52px;
+  --wordmark-font-size: 40px;
   /* wordmark background tokens removed (not used) */
 }
 .dark {
@@ -300,4 +300,53 @@ nav.backdrop-blur-sm {
 main.max-w-5xl.mx-auto {
   padding-top: var(--navbar-height, 56px) !important;
   margin-top: 0 !important;
+}
+
+/* Reduce the site wordmark size on narrow screens so the title doesn't dominate
+   or cause layout issues. We override the variable used by .site-title and
+   slightly reduce the SVG max-height for compact layouts. */
+@media (max-width: 640px) {
+  :root {
+    --wordmark-font-size: 40px;
+  }
+
+  .site-wordmark svg {
+    max-height: 36px;
+    max-width: 140px;
+  }
+}
+
+/* Short centered thick underline for selected links (used by AuthModal "返回登录")
+   - Default: no underline, gray text
+   - Hover / focus: text color changes via Tailwind hover class and the pseudo-element
+     shows a short, thick underline centered beneath the text (uses currentColor).
+ */
+.short-underline-link { display: inline-block; text-decoration: none; }
+.short-underline-link:not(.absolute) { position: relative; }
+.short-underline-link::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -4px; /* space under text */
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: center;
+  width: 28px; /* short underline */
+  height: 3px; /* thick */
+  background: currentColor; /* picks up the link color (hover via Tailwind) */
+  border-radius: 2px;
+  transition: transform 160ms ease, opacity 160ms ease;
+  opacity: 0;
+}
+.short-underline-link:hover::after,
+.short-underline-link:focus::after {
+  transform: translateX(-50%) scaleX(1);
+  opacity: 1;
+}
+
+/* Make the underline shorter for absolutely-positioned controls (e.g. the close "×")
+   so it visually matches the small glyph size. */
+.short-underline-link.absolute::after {
+  width: 14px; /* shorter underline for the close glyph */
+  height: 3px;
+  bottom: -6px; /* lift a bit for large text sizes */
 }

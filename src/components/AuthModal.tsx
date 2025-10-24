@@ -129,31 +129,31 @@ export default function AuthModal({ open, onClose, openView }: { open: boolean, 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-  <div className="relative bg-[#171824] text-gray-100 w-[520px] max-w-[calc(100%-2rem)] mx-4 p-6 rounded-lg h-auto max-h-[90vh]">
+  <div className="relative bg-[#171824] text-gray-100 w-[420px] max-w-[calc(100%-2rem)] mx-4 p-6 rounded-lg h-auto max-h-[90vh]">
         {/* Close control: prominent 'X' in top-right */}
-  <a href="#" aria-label="关闭" onClick={(e) => { e.preventDefault(); onClose() }} className="absolute top-4 right-4 text-gray-300 text-2xl leading-6">×</a>
+    <a href="#" aria-label="关闭" onClick={(e) => { e.preventDefault(); onClose() }} className="absolute top-4 right-7 font-semibold text-gray-300 text-2xl leading-6 short-underline-link hover:text-sky-400">×</a>
 
         {view === 'register' ? (
           // Registration-only view: when the user chooses to register, show only the register form
             <div className="space-y-4">
               <div className="flex items-center justify-start">
-                <a href="#" onClick={(e) => { e.preventDefault(); setView('email') }} className="text-lg font-semibold text-sky-400 hover:text-sky-400">返回登录</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); setView('email') }} className="text-lg font-semibold text-gray-400 short-underline-link hover:text-sky-400">返回登录</a>
               </div>
               <div>
-                <input value={regDraft.username || ''} onChange={(e) => updateDraft({ username: e.target.value })} className="mt-1 w-full max-w-[min(495px,calc(100vw-4rem))] px-3 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" type="text" placeholder="请输入用户名" />
+                <input value={regDraft.username || ''} onChange={(e) => updateDraft({ username: e.target.value })} className="mt-1 w-full px-0 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" type="text" placeholder="请输入用户名" />
               </div>
               <div>
-                <input value={regDraft.email || ''} onChange={(e) => updateDraft({ email: e.target.value })} className="mt-1 w-full max-w-[min(495px,calc(100vw-4rem))] px-3 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" type="email" placeholder="请输入邮箱" />
+                <input value={regDraft.email || ''} onChange={(e) => updateDraft({ email: e.target.value })} className="mt-1 w-full px-0 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" type="email" placeholder="请输入邮箱" />
               </div>
               <div>
-                <input value={regDraft.phone || ''} onChange={(e) => updateDraft({ phone: e.target.value })} className="mt-1 w-full max-w-[min(495px,calc(100vw-4rem))] px-3 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" type="tel" placeholder="请输入手机号（可选）" />
+                <input value={regDraft.phone || ''} onChange={(e) => updateDraft({ phone: e.target.value })} className="mt-1 w-full px-0 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" type="tel" placeholder="请输入手机号（可选）" />
               </div>
               <div className="relative">
-                <input value={regDraft.password || ''} onChange={(e) => updateDraft({ password: e.target.value })} className="mt-1 w-full max-w-[min(495px,calc(100vw-4rem))] px-3 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" type={showRegPassword ? 'text' : 'password'} placeholder="请输入密码" />
+                <input value={regDraft.password || ''} onChange={(e) => updateDraft({ password: e.target.value })} className="mt-1 w-full px-0 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" type={showRegPassword ? 'text' : 'password'} placeholder="请输入密码" />
                 <a href="#" onClick={(e) => { e.preventDefault(); setShowRegPassword(v => !v) }} role="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" aria-pressed={showRegPassword} aria-label={showRegPassword ? '隐藏密码' : '显示密码'} title={showRegPassword ? '隐藏密码' : '显示密码'}>{showRegPassword ? '🙈' : '👁️'}</a>
               </div>
               <div className="relative">
-                <input value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="mt-1 w-full max-w-[min(495px,calc(100vw-4rem))] px-3 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" type={showRegConfirm ? 'text' : 'password'} placeholder="请再次输入密码" />
+                <input value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="mt-1 w-full px-0 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" type={showRegConfirm ? 'text' : 'password'} placeholder="请再次输入密码" />
                 <a href="#" onClick={(e) => { e.preventDefault(); setShowRegConfirm(v => !v) }} role="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" aria-pressed={showRegConfirm} aria-label={showRegConfirm ? '隐藏密码' : '显示密码'} title={showRegConfirm ? '隐藏密码' : '显示密码'}>{showRegConfirm ? '🙈' : '👁️'}</a>
               </div>
               <a href="#" onClick={(e) => { e.preventDefault(); handleRegister() }} aria-disabled={loading} className={`w-full mt-4 py-3 rounded-md ${loading ? 'bg-gray-400' : 'bg-green-600'} text-white text-lg text-center block`}>{loading ? '注册中...' : '注册'}</a>
@@ -162,8 +162,8 @@ export default function AuthModal({ open, onClose, openView }: { open: boolean, 
           <>
             {/* Tabs */}
             <div className="flex items-center justify-start gap-8 mb-6">
-              <a href="#" onClick={(e) => { e.preventDefault(); setView('email') }} className={`text-lg ${view==='email' ? 'text-sky-400 font-semibold' : 'text-gray-400'}`}>邮箱登录</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); setView('phone') }} className={`text-lg ${view==='phone' ? 'text-sky-400 font-semibold' : 'text-gray-400'}`}>手机号登录</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); setView('email') }} className={`text-lg short-underline-link ${view==='email' ? 'text-sky-400 font-semibold' : 'text-gray-400'} hover:text-sky-400`}>邮箱登录</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); setView('phone') }} className={`text-lg short-underline-link ${view==='phone' ? 'text-sky-400 font-semibold' : 'text-gray-400'} hover:text-sky-400`}>手机号登录</a>
             </div>
 
             {view === 'phone' ? (
@@ -171,12 +171,12 @@ export default function AuthModal({ open, onClose, openView }: { open: boolean, 
                 {/* Phone input */}
                 <div className="flex items-center gap-3">
                   <div className="flex items-center px-3 py-2 rounded-md bg-[#202433] border border-[#2b3340] text-gray-100">+86 <svg className="ml-2 w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></div>
-                  <input value={phoneInput} onChange={(e) => setPhoneInput(e.target.value)} className="flex-1 max-w-[min(495px,calc(100vw-4rem))] px-3 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" placeholder="请输入手机号" />
+                  <input value={phoneInput} onChange={(e) => setPhoneInput(e.target.value)} className="flex-1 px-0 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" placeholder="请输入手机号" />
                 </div>
 
                 {/* Password input with eye icon */}
                 <div className="relative">
-                  <input value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} type={showLoginPassword ? 'text' : 'password'} className="w-full max-w-[min(495px,calc(100vw-4rem))] px-3 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" placeholder="请输入密码" />
+                  <input value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} type={showLoginPassword ? 'text' : 'password'} className="w-full px-0 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" placeholder="请输入密码" />
                   <a href="#" onClick={(e) => { e.preventDefault(); setShowLoginPassword(v => !v) }} role="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" aria-pressed={showLoginPassword} aria-label={showLoginPassword ? '隐藏密码' : '显示密码'} title={showLoginPassword ? '隐藏密码' : '显示密码'}>{showLoginPassword ? '🙈' : '👁️'}</a>
                 </div>
 
@@ -184,7 +184,7 @@ export default function AuthModal({ open, onClose, openView }: { open: boolean, 
                 <div className="text-right text-sm text-gray-400">忘记密码?</div>
 
                 {/* Login link */}
-                <a href="#" onClick={(e) => { e.preventDefault(); handleLogin('phone') }} aria-disabled={loading} className={`w-full mt-4 py-3 rounded-md ${loading ? 'bg-gray-400' : 'bg-gradient-to-r from-[#0c7cbd] to-[#0b6aa6]'} text-white text-lg opacity-90 text-center block`}>{loading ? '登录中...' : '登录'}</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); handleLogin('phone') }} aria-disabled={loading} className={`w-full mt-4 py-3 rounded-md ${loading ? 'bg-gray-400' : 'bg-gradient-to-r from-[#0c7cbd] to-[#0b6aa6]'} text-white text-lg opacity-90 text-center block no-underline`}>{loading ? '登录中...' : '登录'}</a>
 
                 {errorMsg && <p className="text-red-600 text-sm">{errorMsg}</p>}
 
@@ -197,14 +197,14 @@ export default function AuthModal({ open, onClose, openView }: { open: boolean, 
               <div className="space-y-4">
                 {/* Email login */}
                 <div>
-                  <input value={emailInput} onChange={(e) => setEmailInput(e.target.value)} type="email" className="w-full max-w-[min(495px,calc(100vw-4rem))] px-3 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" placeholder="请输入邮箱" />
+                  <input value={emailInput} onChange={(e) => setEmailInput(e.target.value)} type="email" className="w-full px-0 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" placeholder="请输入邮箱" />
                 </div>
                 <div className="relative">
-                  <input value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} type={showLoginPassword ? 'text' : 'password'} className="w-full max-w-[min(495px,calc(100vw-4rem))] px-3 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" placeholder="请输入密码" />
+                  <input value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} type={showLoginPassword ? 'text' : 'password'} className="w-full  px-0 py-3 rounded-md bg-transparent border border-[#2b3340] placeholder:text-gray-500 text-gray-100" placeholder="请输入密码" />
                   <a href="#" onClick={(e) => { e.preventDefault(); setShowLoginPassword(v => !v) }} role="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" aria-pressed={showLoginPassword} aria-label={showLoginPassword ? '隐藏密码' : '显示密码'} title={showLoginPassword ? '隐藏密码' : '显示密码'}>{showLoginPassword ? '🙈' : '👁️'}</a>
                 </div>
                 <div className="text-right text-sm text-gray-400">忘记密码?</div>
-                <a href="#" onClick={(e) => { e.preventDefault(); handleLogin('email') }} aria-disabled={loading} className={`w-full mt-4 py-3 rounded-md ${loading ? 'bg-gray-400' : 'bg-gradient-to-r from-[#0c7cbd] to-[#0b6aa6]'} text-white text-lg opacity-90 text-center block`}>{loading ? '登录中...' : '登录'}</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); handleLogin('email') }} aria-disabled={loading} className={`w-full mt-4 py-3 rounded-md ${loading ? 'bg-gray-400' : 'bg-gradient-to-r from-[#0c7cbd] to-[#0b6aa6]'} text-white text-lg opacity-90 text-center block no-underline`}>{loading ? '登录中...' : '登录'}</a>
                 {errorMsg && <p className="text-red-600 text-sm">{errorMsg}</p>}
                 <div className="flex items-center justify-between mt-3 text-sm text-gray-400">
                   <label className="flex items-center gap-2"><input type="checkbox" className="w-4 h-4" /> 自动登录</label>

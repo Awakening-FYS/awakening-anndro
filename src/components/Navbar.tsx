@@ -210,26 +210,24 @@ export default function Navbar() {
           the `peer-checked:` variant - the input must be a sibling that comes before the target. */}
   <input id="nav-toggle" ref={toggleInputRef} className="peer hidden" type="checkbox" aria-hidden />
 
-            <div id="mobile-menu" className={
-  "md:hidden absolute right-4 top-full mt-2 min-w-[10rem] bg-background text-foreground dark:bg-card rounded shadow-lg z-50 " +
-        (open ? 'flex' : 'hidden') +
-        ' peer-checked:flex'
+            <div id="mobile-menu" className={"md:hidden absolute right-0 top-full mt-0 min-w-[7rem] bg-background text-foreground dark:bg-card shadow-lg z-50 " +
+        (open ? 'flex' : 'hidden') +' peer-checked:flex'
       }>
-          <div className="flex flex-col p-2">
-            <Link href="/" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-background/10">首页</Link>
-            <Link href="/about" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-background/10">关于</Link>
-            <Link href="/practice" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-background/10">练习</Link>
-            <Link href="/blog" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-background/10">文章</Link>
-            <Link href="/contact" onClick={() => closeMenu()} className="w-full text-center px-4 py-2 rounded hover:bg-background/10">联系</Link>
+          <div className="flex flex-col p-2 mx-auto max-w-xs">
+            <Link href="/" onClick={() => closeMenu()} className="text-center px-4 py-2 rounded hover:bg-background/10 no-underline text-foreground dark:text-gray-100">首页</Link>
+            <Link href="/about" onClick={() => closeMenu()} className="text-center px-4 py-2 rounded hover:bg-background/10 no-underline text-foreground dark:text-gray-100">关于</Link>
+            <Link href="/practice" onClick={() => closeMenu()} className="text-center px-4 py-2 rounded hover:bg-background/10 no-underline text-foreground dark:text-gray-100">练习</Link>
+            <Link href="/blog" onClick={() => closeMenu()} className="text-center px-4 py-2 rounded hover:bg-background/10 no-underline text-foreground dark:text-gray-100">文章</Link>
+            <Link href="/contact" onClick={() => closeMenu()} className="text-center px-4 py-2 rounded hover:bg-background/10 no-underline text-foreground dark:text-gray-100">联系</Link>
 
-            <div className="pt-2 border-t">
+            <div className="pt-0 border-t -mx-2">
               {session?.user ? (
                 <>
-                  <div className="text-sm mb-2 px-4 py-2 text-center">{session.user.name ?? session.user.email}</div>
-                  <button onClick={async () => { closeMenu(); await signOut({ callbackUrl: pathname || '/', redirect: false }); try { router.refresh() } catch { window.location.href = pathname || '/' } }} className="w-full text-center px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white">退出</button>
+                  <div className="block text-sm mb-0 px-4 py-2 text-center text-foreground dark:text-gray-100">{session.user.name ?? session.user.email}</div>
+                  <a href="#" onClick={async (e) => { e.preventDefault(); closeMenu(); await signOut({ callbackUrl: pathname || '/', redirect: false }); try { router.refresh() } catch { window.location.href = pathname || '/' } }} className="block w-full text-center px-4 py-2 no-underline text-foreground dark:text-gray-100">退出</a>
                 </>
               ) : (
-                <a href="#" onClick={(e) => { e.preventDefault(); closeMenu(); setAuthOpen(true); setAuthOpenView('email') }} className="w-full text-center px-4 py-2">登录</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); closeMenu(); setAuthOpen(true); setAuthOpenView('email') }} className="block text-center px-4 py-2 no-underline text-foreground dark:text-gray-100">登录</a>
               )}
             </div>
           </div>
